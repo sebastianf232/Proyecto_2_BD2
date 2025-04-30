@@ -5,21 +5,21 @@ from faker import Faker
 from datetime import datetime
 from shapely.geometry import Point
 
-# Inicializar Faker en español (Guatemala)
+
 fake = Faker('es')
 
-# Cuántos registros generar
-N_USUARIOS       = 50
-N_RESTAURANTES   = 10
-N_ARTICULOS      = 100
-N_ORDENES        = 200
-N_RESEÑAS        = 150
+#registros
+N_USUARIOS       = 5000
+N_RESTAURANTES   = 50
+N_ARTICULOS      = 450
+N_ORDENES        = 50000
+N_RESEÑAS        = 2000
 
 def gen_object_id():
     """Genera un ID tipo Mongo (hex de 24 chars)."""
     return uuid.uuid4().hex[:24]
 
-# 1) Usuarios
+#Usuarios
 usuarios = []
 for _ in range(N_USUARIOS):
     usuarios.append({
@@ -32,7 +32,7 @@ for _ in range(N_USUARIOS):
         "fechaNacimiento": fake.date_of_birth(minimum_age=18, maximum_age=80).isoformat()
     })
 
-# 2) Restaurantes
+#restaurantes
 restaurantes = []
 for _ in range(N_RESTAURANTES):
     lat, lng = fake.local_latlng(country_code="GT", coords_only=True)
@@ -53,7 +53,7 @@ for _ in range(N_RESTAURANTES):
         "fechaRegistro": fake.date_between(start_date="-2y", end_date="today").isoformat()
     })
 
-# 3) Artículos del menú
+#artículos
 articulos = []
 for _ in range(N_ARTICULOS):
     restaurante = random.choice(restaurantes)["_id"]
@@ -67,7 +67,7 @@ for _ in range(N_ARTICULOS):
         "categoria": random.choice(["Entradas", "Principal", "Postre", "Bebida"])
     })
 
-# 4) Órdenes
+#ordenes
 ordenes = []
 for _ in range(N_ORDENES):
     usuario    = random.choice(usuarios)["_id"]
@@ -95,7 +95,7 @@ for _ in range(N_ORDENES):
         "total": round(total, 2)
     })
 
-# 5) Reseñas
+#reseñas
 resenas = []
 for _ in range(N_RESEÑAS):
     usuario    = random.choice(usuarios)["_id"]
@@ -112,7 +112,7 @@ for _ in range(N_RESEÑAS):
         "fechaResena": fake.date_time_between(start_date="-90d", end_date="now").isoformat()
     })
 
-# Función helper para volcar a archivo JSON
+#guardar en json
 def dump_json(data, filename):
     with open(filename, 'w', encoding='utf-8') as f:
         for doc in data:
