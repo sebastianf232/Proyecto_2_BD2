@@ -1,16 +1,8 @@
-const { MongoClient } = require('mongodb');
 const inquirer = require('inquirer');
-
-// conexión a MongoDB
-const mongoURI = 'mongodb+srv://dia21066:CMSOw7YTLnPTsdEp@cluster0.a4fng.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
-
-// conectarse a MongoDB
-const connectToMongoDB = async () => {
-  const client = new MongoClient(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true });
-  await client.connect();
-  console.log("Conectado a MongoDB");
-  return client;
-};
+const crear = require('./crear');
+const consultar = require('./consultar');
+const actualizar = require('./actualizar');
+const eliminar = require('./eliminar');
 
 // Menú interactivo
 const menu = async () => {
@@ -20,221 +12,217 @@ const menu = async () => {
       name: 'action',
       message: '¿Qué operación deseas realizar?',
       choices: [
-        'Crear Usuario',
-        'Consultar Usuario',
-        'Actualizar Usuario',
-        'Eliminar Usuario',
-        'Crear Restaurante',
-        'Consultar Restaurante',
-        'Actualizar Restaurante',
-        'Eliminar Restaurante',
+        'Crear',
+        'Consultar',
+        'Actualizar',
+        'Eliminar',
         'Salir'
       ],
     },
   ]);
 
-  switch(action) {
-    case 'Crear Usuario':
-      await crearUsuario();
+  switch (action) {
+    case 'Crear':
+      await menuCrear();
       break;
-    case 'Consultar Usuario':
-      await consultarUsuario();
+    case 'Consultar':
+      await menuConsultar();
       break;
-    case 'Actualizar Usuario':
-      await actualizarUsuario();
+    case 'Actualizar':
+      await menuActualizar();
       break;
-    case 'Eliminar Usuario':
-      await eliminarUsuario();
-      break;
-    case 'Crear Restaurante':
-      await crearRestaurante();
-      break;
-    case 'Consultar Restaurante':
-      await consultarRestaurante();
-      break;
-    case 'Actualizar Restaurante':
-      await actualizarRestaurante();
-      break;
-    case 'Eliminar Restaurante':
-      await eliminarRestaurante();
+    case 'Eliminar':
+      await menuEliminar();
       break;
     case 'Salir':
       console.log("¡Hasta luego!");
       process.exit();
       break;
+    default:
+      console.log("Opción no válida.");
+      menu();
+  }
+};
+
+// Menú para la opción Crear
+const menuCrear = async () => {
+  const { actionCrear } = await inquirer.prompt([
+    {
+      type: 'list',
+      name: 'actionCrear',
+      message: '¿Qué deseas crear?',
+      choices: [
+        'Crear Usuario',
+        'Crear Restaurante',
+        'Crear Artículo de Menú',
+        'Crear Orden',
+        'Crear Reseña',
+        'Volver al Menú Principal'
+      ],
+    },
+  ]);
+
+  switch (actionCrear) {
+    case 'Crear Usuario':
+      await crear.crearUsuario();
+      break;
+    case 'Crear Restaurante':
+      await crear.crearRestaurante();
+      break;
+    case 'Crear Artículo de Menú':
+      await crear.crearArticuloDeMenu();
+      break;
+    case 'Crear Orden':
+      await crear.crearOrden();
+      break;
+    case 'Crear Reseña':
+      await crear.crearResena();
+      break;
+    case 'Volver al Menú Principal':
+      return menu();
+    default:
+      console.log("Opción no válida.");
+      menuCrear();
   }
 
-  // Después de realizar una operación, volver a mostrar el menú
-  menu();
+  // Volver al Menú Principal después de la operación
+  await menu();
 };
 
-// Función para Crear un Usuario
-const crearUsuario = async () => {
-  const { nombre, correo, direccion, telefono } = await inquirer.prompt([
-    { type: 'input', name: 'nombre', message: 'Ingrese el nombre del usuario:' },
-    { type: 'input', name: 'correo', message: 'Ingrese el correo del usuario:' },
-    { type: 'input', name: 'direccion', message: 'Ingrese la dirección del usuario:' },
-    { type: 'input', name: 'telefono', message: 'Ingrese el teléfono del usuario:' },
+// Menú para la opción Consultar
+const menuConsultar = async () => {
+  const { actionConsultar } = await inquirer.prompt([
+    {
+      type: 'list',
+      name: 'actionConsultar',
+      message: '¿Qué deseas consultar?',
+      choices: [
+        'Consultar Usuario',
+        'Consultar Restaurante',
+        'Consultar Orden',
+        'Consultar Reseña',
+        'Consultar Artículo de Menú',
+        'Volver al Menú Principal'
+      ],
+    },
   ]);
 
-  const client = await connectToMongoDB();
-  const db = client.db('Proyecto_2');  // Aquí especificamos la base de datos
-  const usuariosCollection = db.collection('Usuarios');  // Accedemos a la colección 'Usuarios'
-
-  const nuevoUsuario = { nombre, correo, direccion, telefono };
-  await usuariosCollection.insertOne(nuevoUsuario);
-
-  console.log('Usuario creado con éxito');
-  await client.close();
-};
-
-// Función para Consultar un Usuario
-const consultarUsuario = async () => {
-  const { nombre } = await inquirer.prompt([
-    { type: 'input', name: 'nombre', message: 'Ingrese el nombre del usuario a consultar:' },
-  ]);
-
-  const client = await connectToMongoDB();
-  const db = client.db('Proyecto_2');  // Aquí especificamos la base de datos
-  const usuariosCollection = db.collection('Usuarios');  // Accedemos a la colección 'Usuarios'
-
-  const usuario = await usuariosCollection.findOne({ nombre });
-  if (usuario) {
-    console.log(usuario);
-  } else {
-    console.log('Usuario no encontrado');
+  switch (actionConsultar) {
+    case 'Consultar Usuario':
+      await consultar.consultarUsuarios();
+      break;
+    case 'Consultar Restaurante':
+      await consultar.consultarRestaurantes();
+      break;
+    case 'Consultar Orden':
+      await consultar.consultarOrdenes();
+      break;
+    case 'Consultar Reseña':
+      await consultar.consultarReseñas();
+      break;
+    case 'Consultar Artículo de Menú':
+      await consultar.consultarArticulosMenu();
+      break;
+    case 'Volver al Menú Principal':
+      return menu();
+    default:
+      console.log("Opción no válida.");
+      menuConsultar();
   }
-  await client.close();
+
+  // Volver al Menú Principal después de la operación
+  await menu();
 };
 
-// Función para Actualizar un Usuario
-const actualizarUsuario = async () => {
-  const { nombre, nuevoCorreo, nuevaDireccion, nuevoTelefono } = await inquirer.prompt([
-    { type: 'input', name: 'nombre', message: 'Ingrese el nombre del usuario a actualizar:' },
-    { type: 'input', name: 'nuevoCorreo', message: 'Nuevo correo del usuario:' },
-    { type: 'input', name: 'nuevaDireccion', message: 'Nueva dirección del usuario:' },
-    { type: 'input', name: 'nuevoTelefono', message: 'Nuevo teléfono del usuario:' },
+// Menú para la opción Actualizar
+const menuActualizar = async () => {
+  const { actionActualizar } = await inquirer.prompt([
+    {
+      type: 'list',
+      name: 'actionActualizar',
+      message: '¿Qué deseas actualizar?',
+      choices: [
+        'Actualizar Usuario',
+        'Actualizar Restaurante',
+        'Actualizar Artículo de Menú',
+        'Actualizar Orden',
+        'Actualizar Reseña',
+        'Volver al Menú Principal'
+      ],
+    },
   ]);
 
-  const client = await connectToMongoDB();
-  const db = client.db('Proyecto_2');  // Aquí especificamos la base de datos
-  const usuariosCollection = db.collection('Usuarios');  // Accedemos a la colección 'Usuarios'
-
-  const result = await usuariosCollection.updateOne(
-    { nombre },
-    { $set: { correo: nuevoCorreo, direccion: nuevaDireccion, telefono: nuevoTelefono } }
-  );
-
-  if (result.modifiedCount > 0) {
-    console.log('Usuario actualizado con éxito');
-  } else {
-    console.log('No se encontró el usuario o no hubo cambios');
+  switch (actionActualizar) {
+    case 'Actualizar Usuario':
+      await actualizar.actualizarUsuario();
+      break;
+    case 'Actualizar Restaurante':
+      await actualizar.actualizarRestaurante();
+      break;
+    case 'Actualizar Artículo de Menú':
+      await actualizar.actualizarArticuloDeMenu();
+      break;
+    case 'Actualizar Orden':
+      await actualizar.actualizarOrden();
+      break;
+    case 'Actualizar Reseña':
+      await actualizar.actualizarResena();
+      break;
+    case 'Volver al Menú Principal':
+      return menu();
+    default:
+      console.log("Opción no válida.");
+      menuActualizar();
   }
-  await client.close();
+
+  // Volver al Menú Principal después de la operación
+  await menu();
 };
 
-// Función para Eliminar un Usuario
-const eliminarUsuario = async () => {
-  const { nombre } = await inquirer.prompt([
-    { type: 'input', name: 'nombre', message: 'Ingrese el nombre del usuario a eliminar:' },
+// Menú para la opción Eliminar
+const menuEliminar = async () => {
+  const { actionEliminar } = await inquirer.prompt([
+    {
+      type: 'list',
+      name: 'actionEliminar',
+      message: '¿Qué deseas eliminar?',
+      choices: [
+        'Eliminar Usuario',
+        'Eliminar Restaurante',
+        'Eliminar Artículo de Menú',
+        'Eliminar Orden',
+        'Eliminar Reseña',
+        'Volver al Menú Principal'
+      ],
+    },
   ]);
 
-  const client = await connectToMongoDB();
-  const db = client.db('Proyecto_2');  // Aquí especificamos la base de datos
-  const usuariosCollection = db.collection('Usuarios');  // Accedemos a la colección 'Usuarios'
-
-  const result = await usuariosCollection.deleteOne({ nombre });
-
-  if (result.deletedCount > 0) {
-    console.log('Usuario eliminado con éxito');
-  } else {
-    console.log('No se encontró el usuario');
+  switch (actionEliminar) {
+    case 'Eliminar Usuario':
+      await eliminar.eliminarUsuario();
+      break;
+    case 'Eliminar Restaurante':
+      await eliminar.eliminarRestaurante();
+      break;
+    case 'Eliminar Artículo de Menú':
+      await eliminar.eliminarArticuloDeMenu();
+      break;
+    case 'Eliminar Orden':
+      await eliminar.eliminarOrden();
+      break;
+    case 'Eliminar Reseña':
+      await eliminar.eliminarResena();
+      break;
+    case 'Volver al Menú Principal':
+      return menu();
+    default:
+      console.log("Opción no válida.");
+      menuEliminar();
   }
-  await client.close();
+
+  // Volver al Menú Principal después de la operación
+  await menu();
 };
 
-// Función para Crear un Restaurante
-const crearRestaurante = async () => {
-  const { nombre, direccion, categoria } = await inquirer.prompt([
-    { type: 'input', name: 'nombre', message: 'Ingrese el nombre del restaurante:' },
-    { type: 'input', name: 'direccion', message: 'Ingrese la dirección del restaurante:' },
-    { type: 'input', name: 'categoria', message: 'Ingrese la categoría del restaurante:' },
-  ]);
-
-  const client = await connectToMongoDB();
-  const db = client.db('Proyecto_2');  // Aquí especificamos la base de datos
-  const restaurantesCollection = db.collection('Restaurantes');  // Accedemos a la colección 'Restaurantes'
-
-  const nuevoRestaurante = { nombre, direccion, categoria };
-  await restaurantesCollection.insertOne(nuevoRestaurante);
-
-  console.log('Restaurante creado con éxito');
-  await client.close();
-};
-
-// Función para Consultar un Restaurante
-const consultarRestaurante = async () => {
-  const { nombre } = await inquirer.prompt([
-    { type: 'input', name: 'nombre', message: 'Ingrese el nombre del restaurante a consultar:' },
-  ]);
-
-  const client = await connectToMongoDB();
-  const db = client.db('Proyecto_2');  // Aquí especificamos la base de datos
-  const restaurantesCollection = db.collection('Restaurantes');  // Accedemos a la colección 'Restaurantes'
-
-  const restaurante = await restaurantesCollection.findOne({ nombre });
-  if (restaurante) {
-    console.log(restaurante);
-  } else {
-    console.log('Restaurante no encontrado');
-  }
-  await client.close();
-};
-
-// Función para Actualizar un Restaurante
-const actualizarRestaurante = async () => {
-  const { nombre, nuevaDireccion, nuevaCategoria } = await inquirer.prompt([
-    { type: 'input', name: 'nombre', message: 'Ingrese el nombre del restaurante a actualizar:' },
-    { type: 'input', name: 'nuevaDireccion', message: 'Nueva dirección del restaurante:' },
-    { type: 'input', name: 'nuevaCategoria', message: 'Nueva categoría del restaurante:' },
-  ]);
-
-  const client = await connectToMongoDB();
-  const db = client.db('Proyecto_2');  // Aquí especificamos la base de datos
-  const restaurantesCollection = db.collection('Restaurantes');  // Accedemos a la colección 'Restaurantes'
-
-  const result = await restaurantesCollection.updateOne(
-    { nombre },
-    { $set: { direccion: nuevaDireccion, categoria: nuevaCategoria } }
-  );
-
-  if (result.modifiedCount > 0) {
-    console.log('Restaurante actualizado con éxito');
-  } else {
-    console.log('No se encontró el restaurante o no hubo cambios');
-  }
-  await client.close();
-};
-
-// Función para Eliminar un Restaurante
-const eliminarRestaurante = async () => {
-  const { nombre } = await inquirer.prompt([
-    { type: 'input', name: 'nombre', message: 'Ingrese el nombre del restaurante a eliminar:' },
-  ]);
-
-  const client = await connectToMongoDB();
-  const db = client.db('Proyecto_2');  // Aquí especificamos la base de datos
-  const restaurantesCollection = db.collection('Restaurantes');  // Accedemos a la colección 'Restaurantes'
-
-  const result = await restaurantesCollection.deleteOne({ nombre });
-
-  if (result.deletedCount > 0) {
-    console.log('Restaurante eliminado con éxito');
-  } else {
-    console.log('No se encontró el restaurante');
-  }
-  await client.close();
-};
-
-// Llamada al menú
+// Llamar al menú principal al ejecutar el archivo
 menu();
