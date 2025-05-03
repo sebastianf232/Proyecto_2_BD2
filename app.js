@@ -1,228 +1,203 @@
+const express = require('express');
 const inquirer = require('inquirer');
+const { MongoClient } = require('mongodb');
 const crear = require('./crear');
 const consultar = require('./consultar');
 const actualizar = require('./actualizar');
 const eliminar = require('./eliminar');
 
-// Menú interactivo
-const menu = async () => {
-  const { action } = await inquirer.prompt([
-    {
-      type: 'list',
-      name: 'action',
-      message: '¿Qué operación deseas realizar?',
-      choices: [
-        'Crear',
-        'Consultar',
-        'Actualizar',
-        'Eliminar',
-        'Salir'
-      ],
-    },
-  ]);
+const app = express();
+app.use(express.json());
 
-  switch (action) {
-    case 'Crear':
-      await menuCrear();
-      break;
-    case 'Consultar':
-      await menuConsultar();
-      break;
-    case 'Actualizar':
-      await menuActualizar();
-      break;
-    case 'Eliminar':
-      await menuEliminar();
-      break;
-    case 'Salir':
-      console.log("¡Hasta luego!");
-      process.exit();
-      break;
-    default:
-      console.log("Opción no válida.");
-      menu();
-  }
+// Conexión a MongoDB
+const mongoURI = 'mongodb+srv://dia21066:CMSOw7YTLnPTsdEp@cluster0.a4fng.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
+const connectToMongoDB = async () => {
+  const client = new MongoClient(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true });
+  await client.connect();
+  return client;
 };
 
-// Menú para la opción Crear
-const menuCrear = async () => {
-  const { actionCrear } = await inquirer.prompt([
-    {
-      type: 'list',
-      name: 'actionCrear',
-      message: '¿Qué deseas crear?',
-      choices: [
-        'Crear Usuario',
-        'Crear Restaurante',
-        'Crear Artículo de Menú',
-        'Crear Orden',
-        'Crear Reseña',
-        'Volver al Menú Principal'
-      ],
-    },
-  ]);
-
-  switch (actionCrear) {
-    case 'Crear Usuario':
-      await crear.crearUsuario();
-      break;
-    case 'Crear Restaurante':
-      await crear.crearRestaurante();
-      break;
-    case 'Crear Artículo de Menú':
-      await crear.crearArticuloDeMenu();
-      break;
-    case 'Crear Orden':
-      await crear.crearOrden();
-      break;
-    case 'Crear Reseña':
-      await crear.crearResena();
-      break;
-    case 'Volver al Menú Principal':
-      return menu();
-    default:
-      console.log("Opción no válida.");
-      menuCrear();
+// Endpoint para crear un usuario
+app.post('/api/usuarios', async (req, res) => {
+  try {
+    await crear.crearUsuario(req, res);
+  } catch (err) {
+    res.status(500).send('Error al crear usuario: ' + err.message);
   }
+});
 
-  // Volver al Menú Principal después de la operación
-  await menu();
-};
-
-// Menú para la opción Consultar
-const menuConsultar = async () => {
-  const { actionConsultar } = await inquirer.prompt([
-    {
-      type: 'list',
-      name: 'actionConsultar',
-      message: '¿Qué deseas consultar?',
-      choices: [
-        'Consultar Usuario',
-        'Consultar Restaurante',
-        'Consultar Orden',
-        'Consultar Reseña',
-        'Consultar Artículo de Menú',
-        'Volver al Menú Principal'
-      ],
-    },
-  ]);
-
-  switch (actionConsultar) {
-    case 'Consultar Usuario':
-      await consultar.consultarUsuarios();
-      break;
-    case 'Consultar Restaurante':
-      await consultar.consultarRestaurantes();
-      break;
-    case 'Consultar Orden':
-      await consultar.consultarOrdenes();
-      break;
-    case 'Consultar Reseña':
-      await consultar.consultarReseñas();
-      break;
-    case 'Consultar Artículo de Menú':
-      await consultar.consultarArticulosMenu();
-      break;
-    case 'Volver al Menú Principal':
-      return menu();
-    default:
-      console.log("Opción no válida.");
-      menuConsultar();
+// Endpoint para consultar usuarios
+app.get('/api/usuarios', async (req, res) => {
+  try {
+    await consultar.consultarUsuarios(req, res);
+  } catch (err) {
+    res.status(500).send('Error al consultar usuarios: ' + err.message);
   }
+});
 
-  // Volver al Menú Principal después de la operación
-  await menu();
-};
-
-// Menú para la opción Actualizar
-const menuActualizar = async () => {
-  const { actionActualizar } = await inquirer.prompt([
-    {
-      type: 'list',
-      name: 'actionActualizar',
-      message: '¿Qué deseas actualizar?',
-      choices: [
-        'Actualizar Usuario',
-        'Actualizar Restaurante',
-        'Actualizar Artículo de Menú',
-        'Actualizar Orden',
-        'Actualizar Reseña',
-        'Volver al Menú Principal'
-      ],
-    },
-  ]);
-
-  switch (actionActualizar) {
-    case 'Actualizar Usuario':
-      await actualizar.actualizarUsuario();
-      break;
-    case 'Actualizar Restaurante':
-      await actualizar.actualizarRestaurante();
-      break;
-    case 'Actualizar Artículo de Menú':
-      await actualizar.actualizarArticuloDeMenu();
-      break;
-    case 'Actualizar Orden':
-      await actualizar.actualizarOrden();
-      break;
-    case 'Actualizar Reseña':
-      await actualizar.actualizarResena();
-      break;
-    case 'Volver al Menú Principal':
-      return menu();
-    default:
-      console.log("Opción no válida.");
-      menuActualizar();
+// Endpoint para actualizar un usuario
+app.put('/api/usuarios/:id', async (req, res) => {
+  try {
+    await actualizar.actualizarUsuario(req, res);
+  } catch (err) {
+    res.status(500).send('Error al actualizar usuario: ' + err.message);
   }
+});
 
-  // Volver al Menú Principal después de la operación
-  await menu();
-};
-
-// Menú para la opción Eliminar
-const menuEliminar = async () => {
-  const { actionEliminar } = await inquirer.prompt([
-    {
-      type: 'list',
-      name: 'actionEliminar',
-      message: '¿Qué deseas eliminar?',
-      choices: [
-        'Eliminar Usuario',
-        'Eliminar Restaurante',
-        'Eliminar Artículo de Menú',
-        'Eliminar Orden',
-        'Eliminar Reseña',
-        'Volver al Menú Principal'
-      ],
-    },
-  ]);
-
-  switch (actionEliminar) {
-    case 'Eliminar Usuario':
-      await eliminar.eliminarUsuario();
-      break;
-    case 'Eliminar Restaurante':
-      await eliminar.eliminarRestaurante();
-      break;
-    case 'Eliminar Artículo de Menú':
-      await eliminar.eliminarArticuloDeMenu();
-      break;
-    case 'Eliminar Orden':
-      await eliminar.eliminarOrden();
-      break;
-    case 'Eliminar Reseña':
-      await eliminar.eliminarResena();
-      break;
-    case 'Volver al Menú Principal':
-      return menu();
-    default:
-      console.log("Opción no válida.");
-      menuEliminar();
+// Endpoint para eliminar un usuario
+app.delete('/api/usuarios/:id', async (req, res) => {
+  try {
+    await eliminar.eliminarUsuario(req, res);
+  } catch (err) {
+    res.status(500).send('Error al eliminar usuario: ' + err.message);
   }
+});
 
-  // Volver al Menú Principal después de la operación
-  await menu();
-};
+// Endpoint para crear un restaurante
+app.post('/api/restaurantes', async (req, res) => {
+  try {
+    await crear.crearRestaurante(req, res);
+  } catch (err) {
+    res.status(500).send('Error al crear restaurante: ' + err.message);
+  }
+});
 
-// Llamar al menú principal al ejecutar el archivo
-menu();
+// Endpoint para consultar restaurantes
+app.get('/api/restaurantes', async (req, res) => {
+  try {
+    await consultar.consultarRestaurantes(req, res);
+  } catch (err) {
+    res.status(500).send('Error al consultar restaurantes: ' + err.message);
+  }
+});
+
+// Endpoint para actualizar un restaurante
+app.put('/api/restaurantes/:id', async (req, res) => {
+  try {
+    await actualizar.actualizarRestaurante(req, res);
+  } catch (err) {
+    res.status(500).send('Error al actualizar restaurante: ' + err.message);
+  }
+});
+
+// Endpoint para eliminar un restaurante
+app.delete('/api/restaurantes/:id', async (req, res) => {
+  try {
+    await eliminar.eliminarRestaurante(req, res);
+  } catch (err) {
+    res.status(500).send('Error al eliminar restaurante: ' + err.message);
+  }
+});
+
+// Endpoint para crear un artículo de menú
+app.post('/api/articulos_menu', async (req, res) => {
+  try {
+    await crear.crearArticuloDeMenu(req, res);
+  } catch (err) {
+    res.status(500).send('Error al crear artículo de menú: ' + err.message);
+  }
+});
+
+// Endpoint para consultar artículos de menú
+app.get('/api/articulos_menu', async (req, res) => {
+  try {
+    await consultar.consultarArticulosMenu(req, res);
+  } catch (err) {
+    res.status(500).send('Error al consultar artículos de menú: ' + err.message);
+  }
+});
+
+// Endpoint para actualizar un artículo de menú
+app.put('/api/articulos_menu/:id', async (req, res) => {
+  try {
+    await actualizar.actualizarArticuloDeMenu(req, res);
+  } catch (err) {
+    res.status(500).send('Error al actualizar artículo de menú: ' + err.message);
+  }
+});
+
+// Endpoint para eliminar un artículo de menú
+app.delete('/api/articulos_menu/:id', async (req, res) => {
+  try {
+    await eliminar.eliminarArticuloDeMenu(req, res);
+  } catch (err) {
+    res.status(500).send('Error al eliminar artículo de menú: ' + err.message);
+  }
+});
+
+// Endpoint para crear una orden
+app.post('/api/ordenes', async (req, res) => {
+  try {
+    await crear.crearOrden(req, res);
+  } catch (err) {
+    res.status(500).send('Error al crear orden: ' + err.message);
+  }
+});
+
+// Endpoint para consultar órdenes
+app.get('/api/ordenes', async (req, res) => {
+  try {
+    await consultar.consultarOrdenes(req, res);
+  } catch (err) {
+    res.status(500).send('Error al consultar órdenes: ' + err.message);
+  }
+});
+
+// Endpoint para actualizar una orden
+app.put('/api/ordenes/:id', async (req, res) => {
+  try {
+    await actualizar.actualizarOrden(req, res);
+  } catch (err) {
+    res.status(500).send('Error al actualizar orden: ' + err.message);
+  }
+});
+
+// Endpoint para eliminar una orden
+app.delete('/api/ordenes/:id', async (req, res) => {
+  try {
+    await eliminar.eliminarOrden(req, res);
+  } catch (err) {
+    res.status(500).send('Error al eliminar orden: ' + err.message);
+  }
+});
+
+// Endpoint para crear una reseña
+app.post('/api/resenas', async (req, res) => {
+  try {
+    await crear.crearResena(req, res);
+  } catch (err) {
+    res.status(500).send('Error al crear reseña: ' + err.message);
+  }
+});
+
+// Endpoint para consultar reseñas
+app.get('/api/resenas', async (req, res) => {
+  try {
+    await consultar.consultarReseñas(req, res);
+  } catch (err) {
+    res.status(500).send('Error al consultar reseñas: ' + err.message);
+  }
+});
+
+// Endpoint para actualizar una reseña
+app.put('/api/resenas/:id', async (req, res) => {
+  try {
+    await actualizar.actualizarResena(req, res);
+  } catch (err) {
+    res.status(500).send('Error al actualizar reseña: ' + err.message);
+  }
+});
+
+// Endpoint para eliminar una reseña
+app.delete('/api/resenas/:id', async (req, res) => {
+  try {
+    await eliminar.eliminarResena(req, res);
+  } catch (err) {
+    res.status(500).send('Error al eliminar reseña: ' + err.message);
+  }
+});
+
+// Iniciar servidor en el puerto 3000
+app.listen(3000, () => {
+  console.log('Servidor API corriendo en http://localhost:3000');
+});

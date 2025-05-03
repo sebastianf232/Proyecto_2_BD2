@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRUD Interfaz API</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Interfaz para operaciones CRUD</h1>
+        
+        <!-- Crear Formulario -->
+        <div class="form-section">
+            <h2>Crear Elemento</h2>
+            <form id="crearElementoForm">
+                <label for="coleccion">Seleccionar Colección:</label>
+                <select id="coleccion" name="coleccion">
+                    <option value="Usuarios">Usuario</option>
+                    <option value="Restaurantes">Restaurante</option>
+                    <option value="Articulos_Menu">Artículo de Menú</option>
+                    <option value="Ordenes">Orden</option>
+                    <option value="Resenas">Reseña</option>
+                </select>
+
+                <div id="form-crear"></div>
+
+                <button type="submit">Crear</button>
+            </form>
+        </div>
+
+        <!-- Consultar Formulario -->
+        <div class="form-section">
+            <h2>Consultar Elemento</h2>
+            <form id="consultarElementoForm">
+                <label for="coleccionConsulta">Seleccionar Colección:</label>
+                <select id="coleccionConsulta" name="coleccionConsulta">
+                    <option value="Usuarios">Usuario</option>
+                    <option value="Restaurantes">Restaurante</option>
+                    <option value="Articulos_Menu">Artículo de Menú</option>
+                    <option value="Ordenes">Orden</option>
+                    <option value="Resenas">Reseña</option>
+                </select>
+
+                <div id="form-consultar"></div>
+
+                <button type="submit">Consultar</button>
+            </form>
+            <div id="resultados"></div>
+        </div>
+
+        <!-- Actualizar Formulario -->
+        <div class="form-section">
+            <h2>Actualizar Elemento</h2>
+            <form id="actualizarElementoForm">
+                <label for="coleccionActualizar">Seleccionar Colección:</label>
+                <select id="coleccionActualizar" name="coleccionActualizar">
+                    <option value="Usuarios">Usuario</option>
+                    <option value="Restaurantes">Restaurante</option>
+                    <option value="Articulos_Menu">Artículo de Menú</option>
+                    <option value="Ordenes">Orden</option>
+                    <option value="Resenas">Reseña</option>
+                </select>
+
+                <div id="form-actualizar"></div>
+
+                <button type="submit">Actualizar</button>
+            </form>
+        </div>
+
+        <!-- Eliminar Formulario -->
+        <div class="form-section">
+            <h2>Eliminar Elemento</h2>
+            <form id="eliminarElementoForm">
+                <label for="coleccionEliminar">Seleccionar Colección:</label>
+                <select id="coleccionEliminar" name="coleccionEliminar">
+                    <option value="Usuarios">Usuario</option>
+                    <option value="Restaurantes">Restaurante</option>
+                    <option value="Articulos_Menu">Artículo de Menú</option>
+                    <option value="Ordenes">Orden</option>
+                    <option value="Resenas">Reseña</option>
+                </select>
+
+                <div id="form-eliminar"></div>
+
+                <button type="submit">Eliminar</button>
+            </form>
+        </div>
+
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
