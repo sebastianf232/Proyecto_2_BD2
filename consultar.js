@@ -1,7 +1,7 @@
 const { MongoClient } = require('mongodb');
 const inquirer = require('inquirer');
 
-// Conexión a MongoDB (Actualiza con tu URI)
+//conexión mongo
 const mongoURI = 'mongodb+srv://dia21066:CMSOw7YTLnPTsdEp@cluster0.a4fng.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
 
 const connectToMongoDB = async () => {
@@ -11,7 +11,7 @@ const connectToMongoDB = async () => {
   return client;
 };
 
-// Consultar Usuarios
+//consultar usuario
 const consultarUsuarios = async () => {
   const { filtro, proyeccion, skip, limit, orden } = await inquirer.prompt([
     { type: 'input', name: 'filtro', message: 'Ingrese el filtro de búsqueda (JSON):' },
@@ -42,7 +42,7 @@ const consultarUsuarios = async () => {
   await client.close();
 };
 
-// Consultar Restaurantes
+//consultar restaurante
 const consultarRestaurantes = async () => {
   const { filtro, proyeccion, skip, limit, orden } = await inquirer.prompt([
     { type: 'input', name: 'filtro', message: 'Ingrese el filtro de búsqueda (JSON):' },
@@ -73,7 +73,7 @@ const consultarRestaurantes = async () => {
   await client.close();
 };
 
-// Consultar Órdenes
+//consultar ordenes
 const consultarOrdenes = async () => {
   const { filtro, proyeccion, skip, limit, orden } = await inquirer.prompt([
     { type: 'input', name: 'filtro', message: 'Ingrese el filtro de búsqueda (JSON):' },
@@ -104,7 +104,7 @@ const consultarOrdenes = async () => {
   await client.close();
 };
 
-// Consultar Reseñas
+// consultar reseñas
 const consultarResenas = async () => {
   const { filtro, proyeccion, skip, limit, orden } = await inquirer.prompt([
     { type: 'input', name: 'filtro', message: 'Ingrese el filtro de búsqueda (JSON):' },
@@ -135,7 +135,7 @@ const consultarResenas = async () => {
   await client.close();
 };
 
-// Consultar Artículos de Menú
+//consultar articulos de menu
 const consultarArticulosMenu = async () => {
   const { filtro, proyeccion, skip, limit, orden } = await inquirer.prompt([
     { type: 'input', name: 'filtro', message: 'Ingrese el filtro de búsqueda (JSON):' },

@@ -1,12 +1,12 @@
-const apiUrl = 'http://localhost:3000/api';  // Dirección de la API (asegúrate de que esté corriendo en tu servidor)
+const apiUrl = 'http://localhost:3000/api';  // API
 
-// Actualizar formularios de acuerdo a la colección seleccionada
+//Actualizar formularios 
 document.getElementById('coleccion').addEventListener('change', updateCreateForm);
 document.getElementById('coleccionConsulta').addEventListener('change', updateConsultForm);
 document.getElementById('coleccionActualizar').addEventListener('change', updateUpdateForm);
 document.getElementById('coleccionEliminar').addEventListener('change', updateDeleteForm);
 
-// Función para actualizar el formulario de creación según la colección seleccionada
+//crear docuemntos
 async function updateCreateForm() {
     const coleccion = document.getElementById('coleccion').value;
     const formCreate = document.getElementById('form-crear');
@@ -49,7 +49,7 @@ async function updateCreateForm() {
     }
 }
 
-// Función para actualizar el formulario de consulta
+// consultar documentos
 async function updateConsultForm() {
     const coleccion = document.getElementById('coleccionConsulta').value;
     const formConsult = document.getElementById('form-consultar');
@@ -63,7 +63,7 @@ async function updateConsultForm() {
     `;
 }
 
-// Función para actualizar el formulario de actualización
+//actualizar documentos
 async function updateUpdateForm() {
     const coleccion = document.getElementById('coleccionActualizar').value;
     const formUpdate = document.getElementById('form-actualizar');
@@ -111,7 +111,7 @@ async function updateUpdateForm() {
     }
 }
 
-// Función para actualizar el formulario de eliminación
+// eliminar documentos
 async function updateDeleteForm() {
     const coleccion = document.getElementById('coleccionEliminar').value;
     const formDelete = document.getElementById('form-eliminar');
@@ -121,7 +121,7 @@ async function updateDeleteForm() {
     `;
 }
 
-// Función para crear elementos
+//creacion elementos
 document.getElementById('crearElementoForm').addEventListener('submit', async (e) => {
     e.preventDefault();
 
@@ -164,7 +164,7 @@ document.getElementById('crearElementoForm').addEventListener('submit', async (e
     console.log(result);
 });
 
-// Función para consultar elementos
+//consultar elementos
 document.getElementById('consultarElementoForm').addEventListener('submit', async (e) => {
     e.preventDefault();
 
@@ -184,7 +184,7 @@ document.getElementById('consultarElementoForm').addEventListener('submit', asyn
     resultadosDiv.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
 });
 
-// Función para eliminar elementos
+//eliminar
 document.getElementById('eliminarElementoForm').addEventListener('submit', async (e) => {
     e.preventDefault();
 

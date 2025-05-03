@@ -1,7 +1,7 @@
 const { MongoClient } = require('mongodb');
 const inquirer = require('inquirer');
 
-// Conexión a MongoDB (Actualiza con tu URI)
+//conexión mongo
 const mongoURI = 'mongodb+srv://dia21066:CMSOw7YTLnPTsdEp@cluster0.a4fng.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
 
 const connectToMongoDB = async () => {
@@ -11,7 +11,7 @@ const connectToMongoDB = async () => {
   return client;
 };
 
-// Eliminar Usuario
+//eliminar usuario
 const eliminarUsuario = async () => {
   const { nombre } = await inquirer.prompt([
     { type: 'input', name: 'nombre', message: 'Ingrese el nombre del usuario a eliminar:' },
@@ -31,7 +31,7 @@ const eliminarUsuario = async () => {
   await client.close();
 };
 
-// Eliminar Restaurante
+//eliminar restaurante
 const eliminarRestaurante = async () => {
   const { nombre } = await inquirer.prompt([
     { type: 'input', name: 'nombre', message: 'Ingrese el nombre del restaurante a eliminar:' },
@@ -51,7 +51,7 @@ const eliminarRestaurante = async () => {
   await client.close();
 };
 
-// Eliminar Artículo de Menú
+// eliminar articulo de menu
 const eliminarArticuloDeMenu = async () => {
   const { nombre } = await inquirer.prompt([
     { type: 'input', name: 'nombre', message: 'Ingrese el nombre del artículo a eliminar:' },
@@ -71,7 +71,7 @@ const eliminarArticuloDeMenu = async () => {
   await client.close();
 };
 
-// Eliminar Orden
+// eliminar orden
 const eliminarOrden = async () => {
   const { idOrden } = await inquirer.prompt([
     { type: 'input', name: 'idOrden', message: 'Ingrese el ID de la orden a eliminar:' },
@@ -91,7 +91,7 @@ const eliminarOrden = async () => {
   await client.close();
 };
 
-// Eliminar Reseña
+//eliminar reseña
 const eliminarResena = async () => {
   const { idResena } = await inquirer.prompt([
     { type: 'input', name: 'idResena', message: 'Ingrese el ID de la reseña a eliminar:' },
@@ -111,7 +111,7 @@ const eliminarResena = async () => {
   await client.close();
 };
 
-// Exportar las funciones para que sean utilizadas en app.js
+//exportar funciones
 module.exports = {
   eliminarUsuario,
   eliminarRestaurante,

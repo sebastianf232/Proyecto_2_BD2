@@ -1,7 +1,7 @@
 const { MongoClient } = require('mongodb');
 const inquirer = require('inquirer');
 
-// Conexión a MongoDB (Actualiza con tu URI)
+//conexion mongo
 const mongoURI = 'mongodb+srv://dia21066:CMSOw7YTLnPTsdEp@cluster0.a4fng.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
 
 const connectToMongoDB = async () => {
@@ -11,7 +11,7 @@ const connectToMongoDB = async () => {
   return client;
 };
 
-// Crear Usuario
+//crear usuario
 const crearUsuario = async () => {
   const { nombre, correo, direccion, telefono } = await inquirer.prompt([
     { type: 'input', name: 'nombre', message: 'Ingrese el nombre del usuario:' },
@@ -31,7 +31,7 @@ const crearUsuario = async () => {
   await client.close();
 };
 
-// Crear Restaurante
+//crear restaurante
 const crearRestaurante = async () => {
   const { nombre, direccion, categoria } = await inquirer.prompt([
     { type: 'input', name: 'nombre', message: 'Ingrese el nombre del restaurante:' },
@@ -50,7 +50,7 @@ const crearRestaurante = async () => {
   await client.close();
 };
 
-// Crear Artículo de Menú
+//crear articulo de menu
 const crearArticuloDeMenu = async () => {
   const { nombre, descripcion, precio, restauranteid, categoria } = await inquirer.prompt([
     { type: 'input', name: 'nombre', message: 'Ingrese el nombre del artículo:' },
@@ -77,7 +77,7 @@ const crearArticuloDeMenu = async () => {
   await client.close();
 };
 
-// Crear Orden
+//crear orden
 const crearOrden = async () => {
   const { restauranteid, usuarioid, articulos } = await inquirer.prompt([
     { type: 'input', name: 'restauranteid', message: 'Ingrese el ID del restaurante:' },
@@ -104,7 +104,7 @@ const crearOrden = async () => {
   await client.close();
 };
 
-// Crear Reseña
+//crear reseña
 const crearResena = async () => {
   const { usuarioid, restauranteid, ordenid, calificacion, comentario } = await inquirer.prompt([
     { type: 'input', name: 'usuarioid', message: 'Ingrese el ID del usuario:' },

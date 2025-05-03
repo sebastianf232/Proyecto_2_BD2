@@ -1,7 +1,7 @@
 const { MongoClient } = require('mongodb');
 const inquirer = require('inquirer');
 
-// Conexión a MongoDB (Actualiza con tu URI)
+// conexión mongo
 const mongoURI = 'mongodb+srv://dia21066:CMSOw7YTLnPTsdEp@cluster0.a4fng.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
 
 const connectToMongoDB = async () => {
@@ -11,7 +11,7 @@ const connectToMongoDB = async () => {
   return client;
 };
 
-// Actualizar Usuario
+//actualizar usuario
 const actualizarUsuario = async () => {
   const { nombre, nuevoCorreo, nuevaDireccion, nuevoTelefono } = await inquirer.prompt([
     { type: 'input', name: 'nombre', message: 'Ingrese el nombre del usuario a actualizar:' },
@@ -37,7 +37,7 @@ const actualizarUsuario = async () => {
   await client.close();
 };
 
-// Actualizar Restaurante
+//actualizar restaurante
 const actualizarRestaurante = async () => {
   const { nombre, nuevaDireccion, nuevaCategoria } = await inquirer.prompt([
     { type: 'input', name: 'nombre', message: 'Ingrese el nombre del restaurante a actualizar:' },
@@ -62,7 +62,7 @@ const actualizarRestaurante = async () => {
   await client.close();
 };
 
-// Actualizar Artículo de Menú
+//actualizar articulo de menu
 const actualizarArticuloDeMenu = async () => {
   const { nombre, nuevaDescripcion, nuevoPrecio, nuevaCategoria } = await inquirer.prompt([
     { type: 'input', name: 'nombre', message: 'Ingrese el nombre del artículo a actualizar:' },
@@ -88,7 +88,7 @@ const actualizarArticuloDeMenu = async () => {
   await client.close();
 };
 
-// Actualizar Orden
+// actualizar orden
 const actualizarOrden = async () => {
   const { idOrden, nuevoEstado } = await inquirer.prompt([
     { type: 'input', name: 'idOrden', message: 'Ingrese el ID de la orden a actualizar:' },
@@ -112,7 +112,7 @@ const actualizarOrden = async () => {
   await client.close();
 };
 
-// Actualizar Reseña
+//actualizar reseña
 const actualizarResena = async () => {
   const { idResena, nuevaCalificacion, nuevoComentario } = await inquirer.prompt([
     { type: 'input', name: 'idResena', message: 'Ingrese el ID de la reseña a actualizar:' },
