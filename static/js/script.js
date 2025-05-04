@@ -18,32 +18,48 @@ async function updateCreateForm() {
             <label for="correo">Correo:</label><input type="email" id="correo" required>
             <label for="direccion">Dirección:</label><input type="text" id="direccion" required>
             <label for="telefono">Teléfono:</label><input type="text" id="telefono" required>
+            <label for="fechaRegistro">Fecha Registro:</label><input type="date" id="fechaRegistro" required>
+            <label for="fechaNacimiento">Fecha Nacimiento:</label><input type="date" id="fechaNacimiento" required>
         `;
     } else if (coleccion === 'Restaurantes') {
         formCreate.innerHTML = `
-            <label for="nombreRestaurante">Nombre Restaurante:</label><input type="text" id="nombreRestaurante" required>
+            <label for="nombre">Nombre Restaurante:</label><input type="text" id="nombre" required>
             <label for="descripcion">Descripción:</label><input type="text" id="descripcion" required>
             <label for="categoria">Categoría:</label><input type="text" id="categoria" required>
+            <label for="calle">Calle:</label><input type="text" id="calle" required>
+            <label for="ciudad">Ciudad:</label><input type="text" id="ciudad" required>
+            <label for="telefono">Teléfono:</label><input type="text" id="telefono" required>
+            <label for="longitud">Longitud:</label><input type="number" id="longitud" step="any">
+            <label for="latitud">Latitud:</label><input type="number" id="latitud" step="any">
+            <label for="fechaRegistro">Fecha Registro:</label><input type="date" id="fechaRegistro" required>
         `;
     } else if (coleccion === 'Articulos_Menu') {
         formCreate.innerHTML = `
-            <label for="nombreArticulo">Nombre Artículo:</label><input type="text" id="nombreArticulo" required>
+            <label for="nombre">Nombre Artículo:</label><input type="text" id="nombre" required>
             <label for="precio">Precio:</label><input type="number" id="precio" required>
-            <label for="descripcionArticulo">Descripción:</label><input type="text" id="descripcionArticulo" required>
+            <label for="descripcion">Descripción:</label><input type="text" id="descripcion" required>
+            <label for="categoria">Categoría:</label><input type="text" id="categoria" required>
+            <label for="restauranteId">ID Restaurante:</label><input type="text" id="restauranteId" required>
+            <label for="disponibilidad">Disponibilidad:</label><input type="checkbox" id="disponibilidad" name="disponibilidad" value="true">
+            
         `;
     } else if (coleccion === 'Ordenes') {
         formCreate.innerHTML = `
             <label for="usuarioId">ID Usuario:</label><input type="text" id="usuarioId" required>
             <label for="restauranteId">ID Restaurante:</label><input type="text" id="restauranteId" required>
             <label for="items">Items (JSON):</label><input type="text" id="items" required>
-            <label for="total">Total:</label><input type="number" id="total" required>
+            <label for="estado">Estado:</label><input type="text" id="estado" required>
+            <label for="fechaOrden">Fecha Orden:</label><input type="date" id="fechaOrden" required>
+
         `;
     } else if (coleccion === 'Resenas') {
         formCreate.innerHTML = `
-            <label for="usuarioIdResena">ID Usuario:</label><input type="text" id="usuarioIdResena" required>
-            <label for="restauranteIdResena">ID Restaurante:</label><input type="text" id="restauranteIdResena" required>
+            <label for="usuarioId">ID Usuario:</label><input type="text" id="usuarioId" required>
+            <label for="restauranteId">ID Restaurante:</label><input type="text" id="restauranteId" required>
             <label for="contenido">Contenido de la Reseña:</label><input type="text" id="contenido" required>
-            <label for="calificacion">Calificación (1-5):</label><input type="number" id="calificacion" required>
+            <label for="calificacion">Calificación (1-5):</label><input type="number" id="calificacion" name="calificacion" min="0" max="5" step="any" required>
+            <label for="ordenId">ID Orden:</label><input type="text" id="ordenId" required>
+            <label for="fechaResena">Fecha Reseña:</label><input type="date" id="fechaResena" required>
         `;
     }
 }
@@ -130,10 +146,18 @@ document.getElementById('crearElementoForm').addEventListener('submit', async (e
         data.correo = document.getElementById('correo').value;
         data.direccion = document.getElementById('direccion').value;
         data.telefono = document.getElementById('telefono').value;
+        data.fechaRegistro = document.getElementById('fechaRegistro').value;
+        data.fechaNacimiento = document.getElementById('fechaNacimiento').value;
     } else if (coleccion === 'Restaurantes') {
         data.nombreRestaurante = document.getElementById('nombreRestaurante').value;
         data.descripcion = document.getElementById('descripcion').value;
         data.categoria = document.getElementById('categoria').value;
+        data.calle = document.getElementById('calle').value;
+        data.ciudad = document.getElementById('ciudad').value;
+        data.telefono = document.getElementById('telefono').value;
+        data.longitud = document.getElementById('longitud').value;
+        data.latitud = document.getElementById('latitud').value;
+        data.fechaRegistro = document.getElementById('fechaRegistro').value;
     } else if (coleccion === 'Articulos_Menu') {
         data.nombreArticulo = document.getElementById('nombreArticulo').value;
         data.precio = document.getElementById('precio').value;
