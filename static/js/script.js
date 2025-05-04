@@ -1,17 +1,16 @@
-const apiUrl = 'http://localhost:3000/api';  // API
+const apiUrl = 'http://127.0.0.1:5000/api';  // Asegúrate de que la URL de la API sea correcta
 
-//Actualizar formularios 
+// Actualizar formularios según la colección seleccionada
 document.getElementById('coleccion').addEventListener('change', updateCreateForm);
 document.getElementById('coleccionConsulta').addEventListener('change', updateConsultForm);
 document.getElementById('coleccionActualizar').addEventListener('change', updateUpdateForm);
 document.getElementById('coleccionEliminar').addEventListener('change', updateDeleteForm);
 
-//crear docuemntos
+// Función para crear elementos (formulario de "Crear")
 async function updateCreateForm() {
     const coleccion = document.getElementById('coleccion').value;
     const formCreate = document.getElementById('form-crear');
-
-    formCreate.innerHTML = ''; // Limpiar el formulario actual
+    formCreate.innerHTML = '';  // Limpiar el formulario actual
 
     if (coleccion === 'Usuarios') {
         formCreate.innerHTML = `
@@ -19,41 +18,56 @@ async function updateCreateForm() {
             <label for="correo">Correo:</label><input type="email" id="correo" required>
             <label for="direccion">Dirección:</label><input type="text" id="direccion" required>
             <label for="telefono">Teléfono:</label><input type="text" id="telefono" required>
+            <label for="fechaRegistro">Fecha Registro:</label><input type="date" id="fechaRegistro" required>
+            <label for="fechaNacimiento">Fecha Nacimiento:</label><input type="date" id="fechaNacimiento" required>
         `;
     } else if (coleccion === 'Restaurantes') {
         formCreate.innerHTML = `
-            <label for="nombreRestaurante">Nombre Restaurante:</label><input type="text" id="nombreRestaurante" required>
+            <label for="nombre">Nombre Restaurante:</label><input type="text" id="nombre" required>
             <label for="descripcion">Descripción:</label><input type="text" id="descripcion" required>
             <label for="categoria">Categoría:</label><input type="text" id="categoria" required>
+            <label for="calle">Calle:</label><input type="text" id="calle" required>
+            <label for="ciudad">Ciudad:</label><input type="text" id="ciudad" required>
+            <label for="telefono">Teléfono:</label><input type="text" id="telefono" required>
+            <label for="longitud">Longitud:</label><input type="number" id="longitud" step="any">
+            <label for="latitud">Latitud:</label><input type="number" id="latitud" step="any">
+            <label for="fechaRegistro">Fecha Registro:</label><input type="date" id="fechaRegistro" required>
         `;
     } else if (coleccion === 'Articulos_Menu') {
         formCreate.innerHTML = `
-            <label for="nombreArticulo">Nombre Artículo:</label><input type="text" id="nombreArticulo" required>
+            <label for="nombre">Nombre Artículo:</label><input type="text" id="nombre" required>
             <label for="precio">Precio:</label><input type="number" id="precio" required>
-            <label for="descripcionArticulo">Descripción:</label><input type="text" id="descripcionArticulo" required>
+            <label for="descripcion">Descripción:</label><input type="text" id="descripcion" required>
+            <label for="categoria">Categoría:</label><input type="text" id="categoria" required>
+            <label for="restauranteId">ID Restaurante:</label><input type="text" id="restauranteId" required>
+            <label for="disponibilidad">Disponibilidad:</label><input type="checkbox" id="disponibilidad" name="disponibilidad" value="true">
+            
         `;
     } else if (coleccion === 'Ordenes') {
         formCreate.innerHTML = `
             <label for="usuarioId">ID Usuario:</label><input type="text" id="usuarioId" required>
             <label for="restauranteId">ID Restaurante:</label><input type="text" id="restauranteId" required>
             <label for="items">Items (JSON):</label><input type="text" id="items" required>
-            <label for="total">Total:</label><input type="number" id="total" required>
+            <label for="estado">Estado:</label><input type="text" id="estado" required>
+            <label for="fechaOrden">Fecha Orden:</label><input type="date" id="fechaOrden" required>
+
         `;
     } else if (coleccion === 'Resenas') {
         formCreate.innerHTML = `
-            <label for="usuarioIdResena">ID Usuario:</label><input type="text" id="usuarioIdResena" required>
-            <label for="restauranteIdResena">ID Restaurante:</label><input type="text" id="restauranteIdResena" required>
+            <label for="usuarioId">ID Usuario:</label><input type="text" id="usuarioId" required>
+            <label for="restauranteId">ID Restaurante:</label><input type="text" id="restauranteId" required>
             <label for="contenido">Contenido de la Reseña:</label><input type="text" id="contenido" required>
-            <label for="calificacion">Calificación (1-5):</label><input type="number" id="calificacion" required>
+            <label for="calificacion">Calificación (1-5):</label><input type="number" id="calificacion" name="calificacion" min="0" max="5" step="any" required>
+            <label for="ordenId">ID Orden:</label><input type="text" id="ordenId" required>
+            <label for="fechaResena">Fecha Reseña:</label><input type="date" id="fechaResena" required>
         `;
     }
 }
 
-// consultar documentos
+// Función para consultar elementos (formulario de "Consultar")
 async function updateConsultForm() {
     const coleccion = document.getElementById('coleccionConsulta').value;
     const formConsult = document.getElementById('form-consultar');
-
     formConsult.innerHTML = `
         <label for="filtro">Filtro (JSON):</label><input type="text" id="filtro" placeholder="Ej: {nombre: 'Juan'}">
         <label for="proyeccion">Proyección (JSON):</label><input type="text" id="proyeccion" placeholder="Ej: {nombre: 1, correo: 1}">
@@ -63,12 +77,11 @@ async function updateConsultForm() {
     `;
 }
 
-//actualizar documentos
+// Función para actualizar elementos (formulario de "Actualizar")
 async function updateUpdateForm() {
     const coleccion = document.getElementById('coleccionActualizar').value;
     const formUpdate = document.getElementById('form-actualizar');
-
-    formUpdate.innerHTML = ''; // Limpiar el formulario actual
+    formUpdate.innerHTML = '';  // Limpiar el formulario actual
 
     if (coleccion === 'Usuarios') {
         formUpdate.innerHTML = `
@@ -111,32 +124,40 @@ async function updateUpdateForm() {
     }
 }
 
-// eliminar documentos
+// Función para eliminar elementos (formulario de "Eliminar")
 async function updateDeleteForm() {
     const coleccion = document.getElementById('coleccionEliminar').value;
     const formDelete = document.getElementById('form-eliminar');
-
     formDelete.innerHTML = `
         <label for="idEliminar">ID del Elemento a Eliminar:</label><input type="text" id="idEliminar" required>
     `;
 }
 
-//creacion elementos
+// Crear elementos
 document.getElementById('crearElementoForm').addEventListener('submit', async (e) => {
     e.preventDefault();
 
     const coleccion = document.getElementById('coleccion').value;
     const data = {};
 
+    // Recoger los datos del formulario según la colección seleccionada
     if (coleccion === 'Usuarios') {
         data.nombre = document.getElementById('nombre').value;
         data.correo = document.getElementById('correo').value;
         data.direccion = document.getElementById('direccion').value;
         data.telefono = document.getElementById('telefono').value;
+        data.fechaRegistro = document.getElementById('fechaRegistro').value;
+        data.fechaNacimiento = document.getElementById('fechaNacimiento').value;
     } else if (coleccion === 'Restaurantes') {
         data.nombreRestaurante = document.getElementById('nombreRestaurante').value;
         data.descripcion = document.getElementById('descripcion').value;
         data.categoria = document.getElementById('categoria').value;
+        data.calle = document.getElementById('calle').value;
+        data.ciudad = document.getElementById('ciudad').value;
+        data.telefono = document.getElementById('telefono').value;
+        data.longitud = document.getElementById('longitud').value;
+        data.latitud = document.getElementById('latitud').value;
+        data.fechaRegistro = document.getElementById('fechaRegistro').value;
     } else if (coleccion === 'Articulos_Menu') {
         data.nombreArticulo = document.getElementById('nombreArticulo').value;
         data.precio = document.getElementById('precio').value;
@@ -164,7 +185,7 @@ document.getElementById('crearElementoForm').addEventListener('submit', async (e
     console.log(result);
 });
 
-//consultar elementos
+// Consultar elementos
 document.getElementById('consultarElementoForm').addEventListener('submit', async (e) => {
     e.preventDefault();
 
@@ -184,7 +205,7 @@ document.getElementById('consultarElementoForm').addEventListener('submit', asyn
     resultadosDiv.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
 });
 
-//eliminar
+// Eliminar elementos
 document.getElementById('eliminarElementoForm').addEventListener('submit', async (e) => {
     e.preventDefault();
 
