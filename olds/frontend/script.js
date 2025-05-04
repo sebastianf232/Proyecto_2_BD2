@@ -19,6 +19,8 @@ async function updateCreateForm() {
             <label for="correo">Correo:</label><input type="email" id="correo" required>
             <label for="direccion">Dirección:</label><input type="text" id="direccion" required>
             <label for="telefono">Teléfono:</label><input type="text" id="telefono" required>
+            <label for="fechaRegistro">Fecha Registro:</label><input type="date" id="fechaRegistro" required>
+            <label for="fechaNacimiento">Fecha Nacimiento:</label><input type="date" id="fechaNacimiento" required>
         `;
     } else if (coleccion === 'Restaurantes') {
         formCreate.innerHTML = `
@@ -48,6 +50,27 @@ async function updateCreateForm() {
         `;
     }
 }
+
+document.getElementById('consultarElementoForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const coleccion = document.getElementById('coleccionConsulta').value;
+    const filtro = document.getElementById('filtro').value;
+    const proyeccion = document.getElementById('proyeccion').value;
+    const skip = document.getElementById('skip').value;
+    const limit = document.getElementById('limit').value;
+    const orden = document.getElementById('orden').value;
+
+    const url = `${apiUrl}/${coleccion.toLowerCase()}?filtro=${filtro}&proyeccion=${proyeccion}&skip=${skip}&limit=${limit}&orden=${orden}`;
+
+    const response = await fetch(url);
+    const data = await response.json();
+
+    console.log(data); // Verifica que los datos sean los correctos
+
+    const resultadosDiv = document.getElementById('resultados');
+    resultadosDiv.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+});
 
 // consultar documentos
 async function updateConsultForm() {
@@ -180,9 +203,12 @@ document.getElementById('consultarElementoForm').addEventListener('submit', asyn
     const response = await fetch(url);
     const data = await response.json();
 
+    console.log(data); // Verifica que los datos sean los correctos
+
     const resultadosDiv = document.getElementById('resultados');
     resultadosDiv.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
 });
+
 
 //eliminar
 document.getElementById('eliminarElementoForm').addEventListener('submit', async (e) => {
