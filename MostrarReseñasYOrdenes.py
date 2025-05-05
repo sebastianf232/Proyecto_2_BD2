@@ -69,9 +69,8 @@ def clasificar_reseñas_por_fecha_desc(Resenas, Restaurantes, NombreRestaurante,
     return list(resultado)
 
 
-
 def obtener_ordenes(ordenes, nombre_restaurante, fecha_inicio, fecha_fin, estado):
-    # Convertir las fechas a formato ISODate
+    # Convertir las fechas a formato datetime
     fecha_inicio = datetime.strptime(fecha_inicio, "%Y-%m-%d")
     fecha_fin = datetime.strptime(fecha_fin, "%Y-%m-%d")
 
@@ -108,10 +107,6 @@ def obtener_ordenes(ordenes, nombre_restaurante, fecha_inicio, fecha_fin, estado
         {
             # Ordenar por fecha en orden descendente (más reciente primero)
             "$sort": { "fechaOrden": -1 }
-        },
-        {
-            # Descomponer los artículos del menú para obtener un documento por artículo
-            "$unwind": "$articulos"
         }
     ])
 
@@ -120,147 +115,7 @@ def obtener_ordenes(ordenes, nombre_restaurante, fecha_inicio, fecha_fin, estado
 
 
 
-def obtener_ordenes1(ordenes, nombre_restaurante, fecha_inicio, fecha_fin, estado):
-    # Convertir las fechas a formato ISODate
-    try:
-        fecha_inicio = datetime.strptime(fecha_inicio, "%Y-%m-%d")
-        fecha_fin = datetime.strptime(fecha_fin, "%Y-%m-%d")
-    except Exception as e:
-        print(f"Error al convertir las fechas: {e}")
-        return []
-    
-    print(f"Fechas de búsqueda: {fecha_inicio} a {fecha_fin}")
-
-    # Verificar que el nombre del restaurante existe en la base de datos
-    restaurante = db['Restaurantes'].find_one({"nombre": nombre_restaurante})
-    
-    if not restaurante:
-        print(f"No se encontró el restaurante con nombre {nombre_restaurante}")
-        return []
-
-    print(f"Restaurante encontrado: {restaurante['nombre']} con id {restaurante['_id']}")
-    restaurante_id = restaurante['_id']
-
-    # Realizar la consulta usando aggregation pipeline
-    resultado = ordenes.aggregate([
-        {
-            # Filtrar por restaurante, fecha y estado
-            "$match": {
-                "datosRestaurante.nombreRestaurante": nombre_restaurante,  # Filtrar por restaurante
-                "fechaOrden": { "$gte": fecha_inicio, "$lte": fecha_fin },  # Filtrar por fecha
-                "estado": estado  # Filtrar por estado
-            }
-        },
-        {
-            # Proyectar solo los campos necesarios
-            "$project": {
-                "_id": 0,  # Excluir _id
-                "nombreUsuario": "$datosUsuario.nombreUsuario",  # Incluir nombreUsuario
-                "correoUsuario": "$datosUsuario.correoUsuario",  # Incluir correoUsuario
-                "articulos": {
-                    "$map": {
-                        "input": "$datosMenu",  # Mapear datos del menú
-                        "as": "articulo",  # Alias para el artículo
-                        "in": {
-                            "nombreArticulo": "$$articulo.nombreArticulo",  # Incluir nombreArticulo
-                            "precio": "$$articulo.precio"  # Incluir precio
-                        }
-                    }
-                },
-                "fechaOrden": 1,  # Incluir la fechaOrden
-                "MontoTotal": 1  # Incluir el MontoTotal
-            }
-        },
-        {
-            # Ordenar por fecha en orden descendente (más reciente primero)
-            "$sort": { "fechaOrden": -1 }
-        },
-        {
-            # Descomponer los artículos del menú para obtener un documento por artículo
-            "$unwind": "$articulos"
-        }
-    ])
-
-    # Retornar el resultado como una lista
-    result_list = list(resultado)
-    
-    if not result_list:
-        print("No se encontraron órdenes que coincidan con los criterios.")
-    
-    return result_list
-
-
-def obtener_ordenes2(ordenes, nombre_restaurante, fecha_inicio, fecha_fin, estado):
-    # Convertir las fechas a formato ISODate
-    try:
-        fecha_inicio = datetime.strptime(fecha_inicio, "%Y-%m-%d")
-        fecha_fin = datetime.strptime(fecha_fin, "%Y-%m-%d")
-    except Exception as e:
-        print(f"Error al convertir las fechas: {e}")
-        return []
-    
-    print(f"Fechas de búsqueda: {fecha_inicio} a {fecha_fin}")
-
-    # Verificar que el nombre del restaurante existe en la base de datos
-    restaurante = db['Restaurantes'].find_one({"nombre": nombre_restaurante})
-    
-    if not restaurante:
-        print(f"No se encontró el restaurante con nombre {nombre_restaurante}")
-        return []
-
-    print(f"Restaurante encontrado: {restaurante['nombre']} con id {restaurante['_id']}")
-    restaurante_id = restaurante['_id']
-
-    # Realizar la consulta usando aggregation pipeline
-    resultado = ordenes.aggregate([
-        {
-            # Filtrar por restaurante, fecha y estado
-            "$match": {
-                "datosRestaurante.nombreRestaurante": nombre_restaurante,  # Filtrar por restaurante
-                "fechaOrden": { "$gte": fecha_inicio, "$lte": fecha_fin },  # Filtrar por fecha
-                "estado": estado  # Filtrar por estado
-            }
-        },
-        {
-            # Proyectar solo los campos necesarios
-            "$project": {
-                "_id": 0,  # Excluir _id
-                "nombreUsuario": "$datosUsuario.nombreUsuario",  # Incluir nombreUsuario
-                "correoUsuario": "$datosUsuario.correoUsuario",  # Incluir correoUsuario
-                "articulos": {
-                    "$map": {
-                        "input": "$datosMenu",  # Mapear datos del menú
-                        "as": "articulo",  # Alias para el artículo
-                        "in": {
-                            "nombreArticulo": "$$articulo.nombreArticulo",  # Incluir nombreArticulo
-                            "precio": "$$articulo.precio"  # Incluir precio
-                        }
-                    }
-                },
-                "fechaOrden": 1,  # Incluir la fechaOrden
-                "MontoTotal": 1  # Incluir el MontoTotal
-            }
-        },
-        {
-            # Ordenar por fecha en orden descendente (más reciente primero)
-            "$sort": { "fechaOrden": -1 }
-        },
-        {
-            # Descomponer los artículos del menú para obtener un documento por artículo
-            "$unwind": "$articulos"
-        }
-    ])
-
-    # Retornar el resultado como una lista
-    result_list = list(resultado)
-    
-    if not result_list:
-        print("No se encontraron órdenes que coincidan con los criterios.")
-    
-    return result_list
-
-
-def obtener_ordenes3(ordenes, nombre_restaurante, fecha_inicio, fecha_fin, estado):
+def obtener_ordenes_grafico(ordenes, nombre_restaurante, fecha_inicio, fecha_fin, estado):
     # Convertir las fechas a formato datetime
     try:
         fecha_inicio = datetime.strptime(fecha_inicio, "%Y-%m-%d")
@@ -351,6 +206,54 @@ def obtener_ordenes3(ordenes, nombre_restaurante, fecha_inicio, fecha_fin, estad
     """
     return result_list,contador_platos
 
+def top_restaurantes_por_puntuacion_y_ordenes(resenas):
+    # Realizar el query con aggregation pipeline
+    resultado = resenas.aggregate([
+        {
+            # Agrupar por restaurante y calcular el promedio de calificación y la cantidad de órdenes
+            "$group": {
+                "_id": "$restauranteId",  # Agrupar por restauranteId
+                "promedio_calificacion": { "$avg": "$calificacion" },  # Calcular promedio de calificación
+                "cantidad_ordenes": { "$sum": 1 }  # Contar la cantidad de órdenes
+            }
+        },
+        {
+            # Proyectar el resultado para incluir el nombre del restaurante, promedio y cantidad de órdenes
+            "$lookup": {
+                "from": "Restaurantes",  # Tabla de restaurantes
+                "localField": "_id",  # Campo de restauranteId de las reseñas
+                "foreignField": "_id",  # Campo _id en Restaurantes
+                "as": "restaurante_info"  # Nombre del array con la información del restaurante
+            }
+        },
+        {
+            # Descomponer el array restaurante_info para acceder al nombre del restaurante
+            "$unwind": "$restaurante_info"
+        },
+        {
+            # Proyectar solo los campos necesarios (nombre del restaurante, promedio de calificación y cantidad de órdenes)
+            "$project": {
+                "_id": 0,
+                "nombreRestaurante": "$restaurante_info.nombre",  # Mostrar el nombre del restaurante
+                "promedio_calificacion": 1,  # Mostrar el promedio de calificación
+                "cantidad_ordenes": 1  # Mostrar la cantidad de órdenes
+            }
+        },
+        {
+            # Ordenar por el promedio de calificación en orden descendente (mejor puntuado primero)
+            "$sort": { "promedio_calificacion": -1 }
+        }
+    ])
+    print(resultado)
+    # Imprimir el resultado
+    #top_restaurantes=list(resultado)
+    #for restaurante in top_restaurantes:
+     #   print(f"Restaurante: {restaurante['nombreRestaurante']}, Promedio de Calificación: {restaurante['promedio_calificacion']:.2f}, Cantidad de Órdenes: {restaurante['cantidad_ordenes']}")
+
+
+    # Retornar el resultado como una lista
+    return list(resultado)
+
 
 def graficar_platos(contador_platos):
     # Extraer los datos de 'contador_platos'
@@ -387,8 +290,46 @@ def graficar_platos(contador_platos):
     # Mostrar los gráficos
     plt.show()
 
+def graficar_promedio_y_ordenes_separadas(top_restaurantes):
+    # Ordenar el top de restaurantes por el promedio de calificación de mayor a menor
+    top_restaurantes = sorted(top_restaurantes, key=lambda x: x['promedio_calificacion'], reverse=True)
 
- 
+    # Limitar a los 10 primeros
+    top_restaurantes = top_restaurantes[:10]
+
+    # Obtener los datos para el gráfico
+    nombres_restaurantes = [restaurante['nombreRestaurante'] for restaurante in top_restaurantes]
+    promedio_calificaciones = [restaurante['promedio_calificacion'] for restaurante in top_restaurantes]
+    cantidad_ordenes = [restaurante['cantidad_ordenes'] for restaurante in top_restaurantes]
+
+    # Crear la figura con 2 subgráficas
+    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(10, 12))
+
+    # Gráfico 1: Promedio de Calificación
+    bars1=ax1.barh(nombres_restaurantes, promedio_calificaciones, color='skyblue')
+    #ax1.set_xlabel('Promedio de Calificación')
+    ax1.set_ylabel('Restaurantes')
+    ax1.set_title('Promedio de Calificación de Restaurantes')
+    ax1.set_xlim(0, 5)  # Limitar el eje X para que se ajuste a la escala de calificación
+    ax1.invert_yaxis()  # Invertir el eje Y para que el restaurante con mayor puntuación esté arriba
+    ax1.bar_label(bars1, fmt='%.2f', padding=5)  # Agregar los valores sobre las barras
+
+    # Gráfico 2: Cantidad de Órdenes
+    bars2=ax2.barh(nombres_restaurantes, cantidad_ordenes, color='orange')
+    ax2.set_xlabel('Cantidad de Órdenes')
+    ax2.set_ylabel('Restaurantes')
+    ax2.set_title('Cantidad de Órdenes de Restaurantes')
+    ax2.invert_yaxis()  # Invertir el eje Y para que el restaurante con más órdenes esté arriba
+    ax2.bar_label(bars2, padding=5)  # Agregar los valores sobre las barras
+
+    # Mostrar las gráficas
+    plt.tight_layout()
+    plt.show()
+
+
+topcito=top_restaurantes_por_puntuacion_y_ordenes(Resenas)
+
+graficar_promedio_y_ordenes_separadas(topcito)
 
 
 
@@ -397,10 +338,18 @@ nombre_restaurante = "Industrias Mendizábal S.Coop."
 fecha_inicio = "2025-02-01"
 fecha_fin = "2025-04-30"
 estado = "En preparación"
-resultados,graficos = obtener_ordenes3(Ordenes, nombre_restaurante, fecha_inicio, fecha_fin, estado)
+#resultados,graficos = obtener_ordenes_grafico(Ordenes, nombre_restaurante, fecha_inicio, fecha_fin, estado)
 
-graficar_platos(graficos)
 
+#resultados = obtener_ordenes(Ordenes, nombre_restaurante, fecha_inicio, fecha_fin, estado)
+
+
+
+#print(resultados)
+#for i in resultados:
+ #   print(i)
+  #  print("____________________________________________________________________________")
+#graficar_platos(graficos)
 
 
 #x=clasificar_reseñas_calificacion_ordenado(Resenas,Restaurantes,'Maxi Borrell Daza S.L.','desc')
