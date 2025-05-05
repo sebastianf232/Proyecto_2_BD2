@@ -52,17 +52,13 @@ def get_articulos_menu():
 def get_ordenes():
     return consultar_ordenes(request, db)
 
-@app.route('/api/resenas', methods=['GET'])
-def get_resenas():
-    return consultar_resenas(request, db)
-
 @app.route('/api/usuarios/<id>', methods=['PUT'])
 def put_usuario(id):
     return actualizar_usuario(id, request, db)
 
 @app.route('/api/restaurantes/<id>', methods=['PUT'])
 def put_restaurante(id):
-    return actualizar_restaurante(id, request, db)
+    return actualizar_restaurante(request, db)
 
 @app.route('/api/articulos_menu/<id>', methods=['PUT'])
 def put_articulo_de_menu(id):

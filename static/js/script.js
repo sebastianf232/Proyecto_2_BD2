@@ -81,7 +81,7 @@ async function updateUpdateForm() {
     const formUpdate = document.getElementById('form-actualizar');
     formUpdate.innerHTML = '';  // Limpiar el formulario actual
 
-    // Dependiendo de la colección seleccionada, mostramos los campos apropiados
+    // Dependiendo de la colección seleccionada, se muestran los campos correspondientes
     if (coleccion === 'Usuarios') {
         formUpdate.innerHTML = `
             <label for="idActualizar">ID Usuario:</label><input type="text" id="idActualizar" required>
@@ -104,35 +104,10 @@ async function updateUpdateForm() {
             <label for="longitudActualizar">Longitud:</label><input type="number" id="longitudActualizar" step="any">
             <label for="latitudActualizar">Latitud:</label><input type="number" id="latitudActualizar" step="any">
             <label for="fechaRegistroActualizar">Fecha Registro:</label><input type="date" id="fechaRegistroActualizar">
-            <label for="disponibilidadActualizar">Disponibilidad:</label><input type="checkbox" id="disponibilidadActualizar" name="disponibilidadActualizar" value="true">
         `;
-    } else if (coleccion === 'Articulos_Menu') {
-        formUpdate.innerHTML = `
-            <label for="idArticuloActualizar">ID Artículo:</label><input type="text" id="idArticuloActualizar" required>
-            <label for="nombreArticuloActualizar">Nombre Artículo:</label><input type="text" id="nombreArticuloActualizar">
-            <label for="precioActualizar">Precio:</label><input type="number" id="precioActualizar">
-            <label for="descripcionArticuloActualizar">Descripción:</label><input type="text" id="descripcionArticuloActualizar">
-            <label for="categoriaArticuloActualizar">Categoría:</label><input type="text" id="categoriaArticuloActualizar">
-        `;
-    } else if (coleccion === 'Ordenes') {
-        formUpdate.innerHTML = `
-            <label for="idOrdenActualizar">ID Orden:</label><input type="text" id="idOrdenActualizar" required>
-            <label for="usuarioIdOrdenActualizar">ID Usuario:</label><input type="text" id="usuarioIdOrdenActualizar">
-            <label for="restauranteIdOrdenActualizar">ID Restaurante:</label><input type="text" id="restauranteIdOrdenActualizar">
-            <label for="itemsOrdenActualizar">Items (JSON):</label><input type="text" id="itemsOrdenActualizar">
-            <label for="totalOrdenActualizar">Total:</label><input type="number" id="totalOrdenActualizar">
-        `;
-    } else if (coleccion === 'Resenas') {
-        formUpdate.innerHTML = `
-            <label for="idResenaActualizar">ID Reseña:</label><input type="text" id="idResenaActualizar" required>
-            <label for="usuarioIdResenaActualizar">ID Usuario:</label><input type="text" id="usuarioIdResenaActualizar">
-            <label for="restauranteIdResenaActualizar">ID Restaurante:</label><input type="text" id="restauranteIdResenaActualizar">
-            <label for="contenidoResenaActualizar">Contenido:</label><input type="text" id="contenidoResenaActualizar">
-            <label for="calificacionResenaActualizar">Calificación (1-5):</label><input type="number" id="calificacionResenaActualizar" min="0" max="5" step="any">
-        `;
-    }
+    } 
+    // Continuar con otros casos si es necesario...
 }
-
 // Función para eliminar elementos (formulario de "Eliminar")
 async function updateDeleteForm() {
     const coleccion = document.getElementById('coleccionEliminar').value;
@@ -226,6 +201,53 @@ document.getElementById('consultarElementoForm').addEventListener('submit', asyn
 
     const resultadosDiv = document.getElementById('resultados');
     resultadosDiv.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+});
+
+document.getElementById('actualizarElementoForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const coleccion = document.getElementById('coleccionActualizar').value;
+    const idActualizar = document.getElementById('idRestauranteActualizar').value;
+    const data = {};
+
+    console.log("ID a actualizar:", idActualizar);
+
+    // Recoger los datos del formulario según la colección seleccionada
+    if (coleccion === 'Usuarios') {
+        data.nombre = document.getElementById('nombreActualizar').value;
+        data.correo = document.getElementById('correoActualizar').value;
+        data.direccion = document.getElementById('direccionActualizar').value;
+        data.telefono = document.getElementById('telefonoActualizar').value;
+        data.fechaRegistro = document.getElementById('fechaRegistroActualizar').value;
+        data.fechaNacimiento = document.getElementById('fechaNacimientoActualizar').value;
+    } else if (coleccion === 'Restaurantes') {
+        data.nombre = document.getElementById('nombreRestauranteActualizar').value;
+        data.descripcion = document.getElementById('descripcionRestauranteActualizar').value;
+        data.categoria = document.getElementById('categoriaRestauranteActualizar').value;
+        data.calle = document.getElementById('calleActualizar').value;
+        data.ciudad = document.getElementById('ciudadActualizar').value;
+        data.telefono = document.getElementById('telefonoActualizar').value;
+        data.longitud = parseFloat(document.getElementById('longitudActualizar').value);
+        data.latitud = parseFloat(document.getElementById('latitudActualizar').value);
+        data.fechaRegistro = document.getElementById('fechaRegistroActualizar').value;
+
+        console.log("Datos a actualizar:", data);
+    }
+
+    // Realizar la solicitud de actualización
+    const response = await fetch(`${apiUrl}/${coleccion.toLowerCase()}/${idActualizar}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+    });
+
+    const result = await response.json();
+    if(response.ok) {
+        alert(`Elemento actualizado con éxito: ${result.message}`);
+    } else {
+        alert(`Error: ${result.message}`);
+    }
+    console.log(result);
 });
 
 // Eliminar elementos
