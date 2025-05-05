@@ -1,4 +1,4 @@
-const apiUrl = 'http://127.0.0.1:5000/api';  // Asegúrate de que la URL de la API sea correcta
+const apiUrl = 'http://127.0.0.1:5000/api';  
 
 // Actualizar formularios según la colección seleccionada
 document.getElementById('coleccion').addEventListener('change', updateCreateForm);
@@ -41,7 +41,6 @@ async function updateCreateForm() {
             <label for="categoria">Categoría:</label><input type="text" id="categoria" required>
             <label for="restauranteId">ID Restaurante:</label><input type="text" id="restauranteId" required>
             <label for="disponibilidad">Disponibilidad:</label><input type="checkbox" id="disponibilidad" name="disponibilidad" value="true">
-            
         `;
     } else if (coleccion === 'Ordenes') {
         formCreate.innerHTML = `
@@ -50,7 +49,6 @@ async function updateCreateForm() {
             <label for="items">Items (JSON):</label><input type="text" id="items" required>
             <label for="estado">Estado:</label><input type="text" id="estado" required>
             <label for="fechaOrden">Fecha Orden:</label><input type="date" id="fechaOrden" required>
-
         `;
     } else if (coleccion === 'Resenas') {
         formCreate.innerHTML = `
@@ -90,6 +88,8 @@ async function updateUpdateForm() {
             <label for="correoActualizar">Correo:</label><input type="email" id="correoActualizar">
             <label for="direccionActualizar">Dirección:</label><input type="text" id="direccionActualizar">
             <label for="telefonoActualizar">Teléfono:</label><input type="text" id="telefonoActualizar">
+            <label for="fechaRegistroActualizar">Fecha Registro:</label><input type="date" id="fechaRegistroActualizar">
+            <label for="fechaNacimientoActualizar">Fecha Nacimiento:</label><input type="date" id="fechaNacimientoActualizar">
         `;
     } else if (coleccion === 'Restaurantes') {
         formUpdate.innerHTML = `
@@ -97,29 +97,13 @@ async function updateUpdateForm() {
             <label for="nombreRestauranteActualizar">Nombre Restaurante:</label><input type="text" id="nombreRestauranteActualizar">
             <label for="descripcionRestauranteActualizar">Descripción:</label><input type="text" id="descripcionRestauranteActualizar">
             <label for="categoriaRestauranteActualizar">Categoría:</label><input type="text" id="categoriaRestauranteActualizar">
-        `;
-    } else if (coleccion === 'Articulos_Menu') {
-        formUpdate.innerHTML = `
-            <label for="idArticuloActualizar">ID Artículo:</label><input type="text" id="idArticuloActualizar" required>
-            <label for="nombreArticuloActualizar">Nombre Artículo:</label><input type="text" id="nombreArticuloActualizar">
-            <label for="precioActualizar">Precio:</label><input type="number" id="precioActualizar">
-            <label for="descripcionArticuloActualizar">Descripción:</label><input type="text" id="descripcionArticuloActualizar">
-        `;
-    } else if (coleccion === 'Ordenes') {
-        formUpdate.innerHTML = `
-            <label for="idOrdenActualizar">ID Orden:</label><input type="text" id="idOrdenActualizar" required>
-            <label for="usuarioIdOrdenActualizar">ID Usuario:</label><input type="text" id="usuarioIdOrdenActualizar">
-            <label for="restauranteIdOrdenActualizar">ID Restaurante:</label><input type="text" id="restauranteIdOrdenActualizar">
-            <label for="itemsOrdenActualizar">Items (JSON):</label><input type="text" id="itemsOrdenActualizar">
-            <label for="totalOrdenActualizar">Total:</label><input type="number" id="totalOrdenActualizar">
-        `;
-    } else if (coleccion === 'Resenas') {
-        formUpdate.innerHTML = `
-            <label for="idResenaActualizar">ID Reseña:</label><input type="text" id="idResenaActualizar" required>
-            <label for="usuarioIdResenaActualizar">ID Usuario:</label><input type="text" id="usuarioIdResenaActualizar">
-            <label for="restauranteIdResenaActualizar">ID Restaurante:</label><input type="text" id="restauranteIdResenaActualizar">
-            <label for="contenidoResenaActualizar">Contenido:</label><input type="text" id="contenidoResenaActualizar">
-            <label for="calificacionResenaActualizar">Calificación (1-5):</label><input type="number" id="calificacionResenaActualizar">
+            <label for="calleActualizar">Calle:</label><input type="text" id="calleActualizar">
+            <label for="ciudadActualizar">Ciudad:</label><input type="text" id="ciudadActualizar">
+            <label for="telefonoActualizar">Teléfono:</label><input type="text" id="telefonoActualizar">
+            <label for="longitudActualizar">Longitud:</label><input type="number" id="longitudActualizar" step="any">
+            <label for="latitudActualizar">Latitud:</label><input type="number" id="latitudActualizar" step="any">
+            <label for="fechaRegistroActualizar">Fecha Registro:</label><input type="date" id="fechaRegistroActualizar">
+            <label for="disponibilidadActualizar">Disponibilidad:</label><input type="checkbox" id="disponibilidadActualizar" name="disponibilidadActualizar" value="true">
         `;
     }
 }
@@ -149,22 +133,25 @@ document.getElementById('crearElementoForm').addEventListener('submit', async (e
         data.fechaRegistro = document.getElementById('fechaRegistro').value;
         data.fechaNacimiento = document.getElementById('fechaNacimiento').value;
     } else if (coleccion === 'Restaurantes') {
-        data.nombreRestaurante = document.getElementById('nombreRestaurante').value;
+        data.nombre = document.getElementById('nombre').value;
         data.descripcion = document.getElementById('descripcion').value;
         data.categoria = document.getElementById('categoria').value;
         data.calle = document.getElementById('calle').value;
         data.ciudad = document.getElementById('ciudad').value;
         data.telefono = document.getElementById('telefono').value;
-        data.longitud = document.getElementById('longitud').value;
-        data.latitud = document.getElementById('latitud').value;
+        data.longitud = parseFloat(document.getElementById('longitud').value);
+        data.latitud = parseFloat(document.getElementById('latitud').value);
         data.fechaRegistro = document.getElementById('fechaRegistro').value;
     } else if (coleccion === 'Articulos_Menu') {
-        data.nombreArticulo = document.getElementById('nombreArticulo').value;
+        data.nombre = document.getElementById('nombre').value;
         data.precio = document.getElementById('precio').value;
-        data.descripcionArticulo = document.getElementById('descripcionArticulo').value;
-    } else if (coleccion === 'Ordenes') {
-        data.usuarioId = document.getElementById('usuarioId').value;
+        data.descripcion = document.getElementById('descripcion').value;
+        data.categoria = document.getElementById('categoria').value;
         data.restauranteId = document.getElementById('restauranteId').value;
+        data.disponibilidad = document.getElementById('disponibilidad').checked;
+    } else if (coleccion === 'Ordenes') {
+        data.usuarioId = document.getElementById('usuarioid').value;
+        data.restauranteId = document.getElementById('restauranteid').value;
         data.items = document.getElementById('items').value;
         data.total = document.getElementById('total').value;
     } else if (coleccion === 'Resenas') {
@@ -174,6 +161,7 @@ document.getElementById('crearElementoForm').addEventListener('submit', async (e
         data.calificacion = document.getElementById('calificacion').value;
     }
 
+    // Asegúrate de que la URL esté correcta dependiendo de la colección seleccionada
     const response = await fetch(`${apiUrl}/${coleccion.toLowerCase()}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

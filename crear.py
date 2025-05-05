@@ -54,6 +54,13 @@ def crear_restaurante(request, db):
         latitud = request.json.get("latitud")
         fecha_registro = request.json.get("fechaRegistro")
 
+        # Validar que no falten campos requeridos
+        if not nombre_restaurante or not descripcion or not categoria:
+            return jsonify({"message": "Faltan datos obligatorios: nombre, descripcion, categoria"}), 400
+        
+        if longitud is None or latitud is None:
+            return jsonify({"message": "Las coordenadas no pueden ser nulas."}), 400
+
         # Crear el objeto JSON para el restaurante
         restaurante = {
             "nombre": nombre_restaurante,
@@ -66,13 +73,9 @@ def crear_restaurante(request, db):
             "telefono": telefono,
             "ubicacion": {
                 "type": "Point",
-                "coordinates": [
-                    longitud,
-                    latitud
-                ]
+                "coordinates": [longitud, latitud]  # Usando la longitud y latitud como array de coordenadas
             },
             "fechaRegistro": fecha_registro
-
         }
 
         # Insertar el nuevo restaurante en la colección 'restaurantes'
@@ -116,7 +119,7 @@ def crear_articulo_de_menu(request, db):
         return jsonify({"message": f"Error al crear el artículo de menú: {str(e)}"}), 500
 
 
-# Crear una orden (Pedir campos por separado)
+# Crear una orden 
 def crear_orden(request, db):
     try:
         # Pedir los campos por separado
