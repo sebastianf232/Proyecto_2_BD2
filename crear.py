@@ -1,6 +1,8 @@
 from flask import jsonify, request
 from pymongo import MongoClient
 from bson import ObjectId
+import json
+from bson import json_util
 
 # Conexión a MongoDB
 def connect_to_mongo():
@@ -119,73 +121,97 @@ def crear_articulo_de_menu(request, db):
         return jsonify({"message": f"Error al crear el artículo de menú: {str(e)}"}), 500
 
 
-# Crear una orden 
+
+#Crear Orden
 def crear_orden(request, db):
     try:
-        # Pedir los campos por separado
-        usuario_id = request.json.get("usuarioId")
-        restaurante_id = request.json.get("restauranteId")
-        items_ids = request.json.get("items")  # Esto debería ser una lista de ids de artículos
+        usuario_id_str = request.json.get("usuarioId")
+        restaurante_id_str = request.json.get("restauranteId")
+        items_ids_str = request.json.get("items")  # Lista de strings
         estado = request.json.get("estado")
         fecha_orden = request.json.get("fechaOrden")
 
-        # Obtener los datos del restaurante
-        restaurante = db.Restaurantes.find_one({"_id": restaurante_id})
+        # Conversión segura de ID
+        try:
+            usuario_obj_id = ObjectId(usuario_id_str.strip())
+        except Exception:
+            usuario_obj_id = None
+
+        try:
+            restaurante_obj_id = ObjectId(restaurante_id_str.strip())
+        except Exception:
+            restaurante_obj_id = None
+
+        # Buscar restaurante
+        restaurante = db.Restaurantes.find_one({
+            "$or": [
+                {"_id": restaurante_obj_id} if restaurante_obj_id else {},
+                {"_id": restaurante_id_str}
+            ]
+        })
         if not restaurante:
             return jsonify({"message": "Restaurante no encontrado"}), 404
 
-        # Obtener los datos del usuario
-        usuario = db.Usuarios.find_one({"_id": ObjectId(usuario_id)})
-        datos = []
-        if usuario:
-            items = {
-                "usuarioId": usuario_id,
-                "nombre": usuario.get("nombre"),
-                "correo": usuario.get("correo")
-            }
-            datos.append(items)
-        else:
+        # Buscar usuario
+        usuario = db.Usuarios.find_one({
+            "$or": [
+                {"_id": usuario_obj_id} if usuario_obj_id else {},
+                {"_id": usuario_id_str}
+            ]
+        })
+        if not usuario:
             return jsonify({"message": "Usuario no encontrado"}), 404
-        
 
-        # Obtener los artículos y calcular el total
+        # Procesar artículos
         total = 0
         datos_menu = []
-        for item_id in items_ids:
-            articulo = db.Articulos_Menu.find_one({"_id": item_id})
+        for item_id_str in items_ids_str:
+            item_id_str = item_id_str.strip()
+            try:
+                item_obj_id = ObjectId(item_id_str)
+            except Exception:
+                item_obj_id = None
+
+            articulo = db.Articulos_Menu.find_one({
+                "$or": [
+                    {"_id": item_obj_id} if item_obj_id else {},
+                    {"_id": item_id_str}
+                ]
+            })
             if articulo:
-                item = {
-                    "articuloId": item_id,
+                datos_menu.append({
+                    "articuloId": str(articulo["_id"]),
                     "nombreArticulo": articulo.get("nombreArticulo"),
                     "precio": articulo.get("precio")
-                }
-                datos_menu.append(item)
-                total += articulo.get("precio", 0)  # Acumular el precio al total
+                })
+                total += float(articulo.get("precio", 0))
             else:
-                return jsonify({"message": f"Artículo con ID {item_id} no encontrado"}), 404
+                return jsonify({"message": f"Artículo con ID {item_id_str} no encontrado"}), 404
 
-        # Crear el objeto JSON para la orden
+        # Crear la orden
         orden = {
             "datosRestaurante": {
-                "restauranteId": restaurante_id,
-                "nombreRestaurante": restaurante.get("nombreRestaurante")
-                },
+                "restauranteId": str(restaurante.get("_id")),
+                "nombreRestaurante": restaurante.get("nombre")
+            },
             "datosUsuario": {
-                "usuarioId": usuario_id,
+                "usuarioId": str(usuario.get("_id")),
                 "nombreUsuario": usuario.get("nombre"),
                 "correoUsuario": usuario.get("correo")
-                },
+            },
             "datosMenu": datos_menu,
             "estado": estado,
             "fechaOrden": fecha_orden,
             "montoTotal": total
         }
 
-        # Insertar la orden en la base de datos
         db.Ordenes.insert_one(orden)
         return jsonify({"message": "Orden creada con éxito", "orden": orden}), 201
+
     except Exception as e:
-        return jsonify({"message": "Error al crear la orden: " + str(e)}), 500
+        return jsonify({"message": f"Error al crear la orden: {str(e)}"}), 500
+
+
 
 
 # Crear una reseña (Pedir campos por separado)
@@ -219,3 +245,4 @@ def crear_resena(request, db):
     except Exception as e:
         # Manejo de errores
         return jsonify({"message": f"Error al crear la reseña: {str(e)}"}), 500
+
