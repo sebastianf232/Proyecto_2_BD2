@@ -36,7 +36,7 @@ async function updateCreateForm() {
     } else if (coleccion === 'Articulos_Menu') {
         formCreate.innerHTML = `
             <label for="nombre">Nombre Artículo:</label><input type="text" id="nombre" required>
-            <label for="precio">Precio:</label><input type="number" id="precio" required>
+            <label for="precio">Precio:</label><input type="number" id="precio" step="0.01" required>
             <label for="descripcion">Descripción:</label><input type="text" id="descripcion" required>
             <label for="categoria">Categoría:</label><input type="text" id="categoria" required>
             <label for="restauranteId">ID Restaurante:</label><input type="text" id="restauranteId" required>
@@ -169,17 +169,27 @@ document.getElementById('crearElementoForm').addEventListener('submit', async (e
         data.fechaRegistro = document.getElementById('fechaRegistro').value;
     } else if (coleccion === 'Articulos_Menu') {
         data.nombre = document.getElementById('nombre').value;
-        data.precio = document.getElementById('precio').value;
+        data.precio = parseFloat(document.getElementById('precio').value);
         data.descripcion = document.getElementById('descripcion').value;
         data.categoria = document.getElementById('categoria').value;
         data.restauranteId = document.getElementById('restauranteId').value;
         data.disponibilidad = document.getElementById('disponibilidad').checked;
     } else if (coleccion === 'Ordenes') {
-        data.usuarioid = document.getElementById('usuarioid').value;
-        data.restauranteid = document.getElementById('restauranteid').value;
-        data.items = document.getElementById('items').value;
-        data.total = document.getElementById('total').value;
-    } else if (coleccion === 'Resenas') {
+        data.usuarioId = document.getElementById('usuarioId').value;
+        data.restauranteId = document.getElementById('restauranteId').value;
+    
+        try {
+            data.items = JSON.parse(document.getElementById('items').value);  
+        } catch (e) {
+            alert("Items debe ser un arreglo JSON válido, ejemplo: [\"id1\", \"id2\"]");
+            return;
+        }
+    
+        data.estado = document.getElementById('estado').value;
+        data.fechaOrden = document.getElementById('fechaOrden').value;
+    }
+
+     else if (coleccion === 'Resenas') {
         data.usuarioIdResena = document.getElementById('usuarioIdResena').value;
         data.restauranteIdResena = document.getElementById('restauranteIdResena').value;
         data.contenido = document.getElementById('contenido').value;
