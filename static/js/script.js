@@ -81,6 +81,7 @@ async function updateUpdateForm() {
     const formUpdate = document.getElementById('form-actualizar');
     formUpdate.innerHTML = '';  // Limpiar el formulario actual
 
+    // Dependiendo de la colección seleccionada, mostramos los campos apropiados
     if (coleccion === 'Usuarios') {
         formUpdate.innerHTML = `
             <label for="idActualizar">ID Usuario:</label><input type="text" id="idActualizar" required>
@@ -104,6 +105,30 @@ async function updateUpdateForm() {
             <label for="latitudActualizar">Latitud:</label><input type="number" id="latitudActualizar" step="any">
             <label for="fechaRegistroActualizar">Fecha Registro:</label><input type="date" id="fechaRegistroActualizar">
             <label for="disponibilidadActualizar">Disponibilidad:</label><input type="checkbox" id="disponibilidadActualizar" name="disponibilidadActualizar" value="true">
+        `;
+    } else if (coleccion === 'Articulos_Menu') {
+        formUpdate.innerHTML = `
+            <label for="idArticuloActualizar">ID Artículo:</label><input type="text" id="idArticuloActualizar" required>
+            <label for="nombreArticuloActualizar">Nombre Artículo:</label><input type="text" id="nombreArticuloActualizar">
+            <label for="precioActualizar">Precio:</label><input type="number" id="precioActualizar">
+            <label for="descripcionArticuloActualizar">Descripción:</label><input type="text" id="descripcionArticuloActualizar">
+            <label for="categoriaArticuloActualizar">Categoría:</label><input type="text" id="categoriaArticuloActualizar">
+        `;
+    } else if (coleccion === 'Ordenes') {
+        formUpdate.innerHTML = `
+            <label for="idOrdenActualizar">ID Orden:</label><input type="text" id="idOrdenActualizar" required>
+            <label for="usuarioIdOrdenActualizar">ID Usuario:</label><input type="text" id="usuarioIdOrdenActualizar">
+            <label for="restauranteIdOrdenActualizar">ID Restaurante:</label><input type="text" id="restauranteIdOrdenActualizar">
+            <label for="itemsOrdenActualizar">Items (JSON):</label><input type="text" id="itemsOrdenActualizar">
+            <label for="totalOrdenActualizar">Total:</label><input type="number" id="totalOrdenActualizar">
+        `;
+    } else if (coleccion === 'Resenas') {
+        formUpdate.innerHTML = `
+            <label for="idResenaActualizar">ID Reseña:</label><input type="text" id="idResenaActualizar" required>
+            <label for="usuarioIdResenaActualizar">ID Usuario:</label><input type="text" id="usuarioIdResenaActualizar">
+            <label for="restauranteIdResenaActualizar">ID Restaurante:</label><input type="text" id="restauranteIdResenaActualizar">
+            <label for="contenidoResenaActualizar">Contenido:</label><input type="text" id="contenidoResenaActualizar">
+            <label for="calificacionResenaActualizar">Calificación (1-5):</label><input type="number" id="calificacionResenaActualizar" min="0" max="5" step="any">
         `;
     }
 }
@@ -150,8 +175,8 @@ document.getElementById('crearElementoForm').addEventListener('submit', async (e
         data.restauranteId = document.getElementById('restauranteId').value;
         data.disponibilidad = document.getElementById('disponibilidad').checked;
     } else if (coleccion === 'Ordenes') {
-        data.usuarioId = document.getElementById('usuarioid').value;
-        data.restauranteId = document.getElementById('restauranteid').value;
+        data.usuarioid = document.getElementById('usuarioid').value;
+        data.restauranteid = document.getElementById('restauranteid').value;
         data.items = document.getElementById('items').value;
         data.total = document.getElementById('total').value;
     } else if (coleccion === 'Resenas') {
