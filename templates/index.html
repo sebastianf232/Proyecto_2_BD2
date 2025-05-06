@@ -79,6 +79,27 @@
             </form>
         </div>
 
+        <!-- Funcion 1 -->
+        <!-- Mostrar Reseñas -->
+        <div class="form-section">
+            <h2>Mostrar Reseñas de Restaurante</h2>
+            <form id="mostrarResenasForm">
+                <label for="nombreRestaurante">Nombre del Restaurante:</label>
+                <input type="text" id="nombreRestaurante" name="nombreRestaurante" required>
+
+                <label for="orden">Orden:</label>
+                <select id="orden" name="orden">
+                    <option value="desc">Mayor a menor</option>
+                    <option value="asc">Menor a mayor</option>
+                </select>
+
+                <button type="submit">Ver Reseñas</button>
+            </form>
+            <div id="resultadoResenas"></div>
+        </div>
+        <!-- Funcion 1 -->
+
+
     </div>
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>

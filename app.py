@@ -5,6 +5,11 @@ from consultar import consultar_usuarios, consultar_restaurantes, consultar_arti
 from actualizar import actualizar_usuario, actualizar_restaurante, actualizar_articulo_de_menu, actualizar_orden, actualizar_resena
 from eliminar import eliminar_usuario, eliminar_restaurante, eliminar_articulo_de_menu, eliminar_orden, eliminar_resena
 
+from MostrarReseñasYOrdenes import clasificar_reseñas_calificacion_ordenado
+import json
+from bson import json_util
+
+
 app = Flask(__name__)
 
 # Conexión a MongoDB
@@ -92,5 +97,22 @@ def delete_orden(id):
 def delete_resena(id):
     return eliminar_resena(id, db)
 
+@app.route('/api/resenas_restaurante')
+def obtener_resenas_restaurante():
+    nombre = request.args.get('nombre')
+    orden = request.args.get('orden', 'desc')
+
+    if not nombre:
+        return jsonify({"message": "Debes proporcionar el nombre del restaurante"}), 400
+
+    resultado = clasificar_reseñas_calificacion_ordenado(db, nombre, orden)
+
+    if isinstance(resultado, str):  # mensaje de error
+        return jsonify({"message": resultado}), 404
+
+    resultado_json = json.loads(json_util.dumps(resultado))
+    return jsonify({"reseñas": resultado_json})
+
 if __name__ == '__main__':
     app.run(debug=True)
+

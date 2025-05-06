@@ -265,3 +265,29 @@ document.getElementById('eliminarElementoForm').addEventListener('submit', async
     alert('Elemento eliminado con éxito');
     console.log(data);
 });
+
+
+document.getElementById('mostrarResenasForm').addEventListener('submit', async function (e) {
+    e.preventDefault();
+
+    const nombreRestaurante = document.getElementById('nombreRestaurante').value;
+    const orden = document.getElementById('orden').value;
+
+    const response = await fetch(`/api/resenas_restaurante?nombre=${encodeURIComponent(nombreRestaurante)}&orden=${orden}`);
+    const data = await response.json();
+
+    const resultadoDiv = document.getElementById('resultadoResenas');
+    resultadoDiv.innerHTML = '';
+
+    if (data.message) {
+        resultadoDiv.textContent = data.message;
+    } else {
+        data.reseñas.forEach(resena => {
+            const p = document.createElement('p');
+            const fecha = resena.fechaResena ? new Date(resena.fechaResena).toLocaleDateString() : 'sin fecha';
+            p.textContent = `⭐ ${resena.calificacion} - ${resena.comentario || 'Sin comentario'} (📅 ${fecha})`;
+            resultadoDiv.appendChild(p);
+        });
+    }
+});
+

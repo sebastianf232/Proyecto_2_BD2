@@ -2,7 +2,7 @@ from pymongo import MongoClient
 from datetime import datetime
 import matplotlib.pyplot as plt
 import seaborn as sns
-
+"""
 # Cadena de conexión copiada de Compass
 uri = "mongodb+srv://adrian:CmKZDuWRuJmoQfQc@cluster0.a4fng.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
 
@@ -19,9 +19,9 @@ Restaurantes= db['Restaurantes']
 
 Ordenes=db['Ordenes']
 
-
+"""
 #Muestra las reseñas de un restaurante dado el nombre del restaurante (las muestra en asc o desc por calificacion)
-def clasificar_reseñas_calificacion_ordenado(Resenas, Restaurantes, NombreRestaurante, orden):
+def clasificar_reseñas_calificacion_ordenado(db, NombreRestaurante, orden):
     order=0
     if orden=='asc':
         order=1
@@ -29,7 +29,7 @@ def clasificar_reseñas_calificacion_ordenado(Resenas, Restaurantes, NombreResta
         order=-1
     
     # Buscar el restaurante por su nombre y obtener el restauranteId
-    restaurante = Restaurantes.find_one({"nombre": NombreRestaurante})
+    restaurante = db.Restaurantes.find_one({"nombre": NombreRestaurante})
     
     if not restaurante:
         return f"Restaurante con nombre {NombreRestaurante} no encontrado."
@@ -37,7 +37,7 @@ def clasificar_reseñas_calificacion_ordenado(Resenas, Restaurantes, NombreResta
     restaurante_id = restaurante['_id']
     
     # Buscar las reseñas del restaurante por restauranteId y ordenarlas por calificación descendente
-    resultado = Resenas.find(
+    resultado = db.Resenas.find(
         {"restauranteId": restaurante_id}  # Filtrar por restauranteId
     ).sort("calificacion", order)  # Ordenar por calificación en orden descendente
     
@@ -326,7 +326,7 @@ def graficar_promedio_y_ordenes_separadas(top_restaurantes):
     plt.tight_layout()
     plt.show()
 
-
+"""
 topcito=top_restaurantes_por_puntuacion_y_ordenes(Resenas)
 
 graficar_promedio_y_ordenes_separadas(topcito)
@@ -340,7 +340,7 @@ fecha_fin = "2025-04-30"
 estado = "En preparación"
 #resultados,graficos = obtener_ordenes_grafico(Ordenes, nombre_restaurante, fecha_inicio, fecha_fin, estado)
 
-
+"""
 #resultados = obtener_ordenes(Ordenes, nombre_restaurante, fecha_inicio, fecha_fin, estado)
 
 
@@ -363,4 +363,4 @@ estado = "En preparación"
 
 
 # Cerrar la conexión cuando ya no sea necesaria
-client.close()
+#client.close()
