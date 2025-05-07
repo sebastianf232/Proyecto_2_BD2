@@ -291,3 +291,120 @@ document.getElementById('mostrarResenasForm').addEventListener('submit', async f
     }
 });
 
+document.getElementById('mostrarResenasPorFechaForm').addEventListener('submit', async function (e) {
+    e.preventDefault();
+
+    const nombreRestauranteFecha = document.getElementById('nombreRestauranteFecha').value;
+    const ordenFecha = document.getElementById('ordenFecha').value;
+
+    const response = await fetch(`/api/resenas_restaurante_fecha?nombre=${encodeURIComponent(nombreRestauranteFecha)}&orden=${ordenFecha}`);
+    const data = await response.json();
+
+    const resultadoDiv = document.getElementById('resultadoResenasPorFecha');
+    resultadoDiv.innerHTML = '';
+
+    if (data.message) {
+        resultadoDiv.textContent = data.message;
+    } else {
+        data.reseñas.forEach(resena => {
+            const p = document.createElement('p');
+            const fecha = resena.fechaResena ? new Date(resena.fechaResena).toLocaleDateString() : 'sin fecha';
+            p.textContent = `⭐ ${resena.calificacion} - ${resena.comentario || 'Sin comentario'} (📅 ${fecha})`;
+            resultadoDiv.appendChild(p);
+        });
+    }
+});
+
+document.getElementById('mostrarOrdenesForm').addEventListener('submit', async function (e) {
+    e.preventDefault();
+
+    const nombreRestauranteOrdenes = document.getElementById('nombreRestauranteOrdenes').value;
+    const fechaInicio = document.getElementById('fechaInicio').value;
+    const fechaFin = document.getElementById('fechaFin').value;
+    const estadoOrden = document.getElementById('estadoOrden').value;
+
+    const response = await fetch(`/api/ordenes_restaurante?nombre=${encodeURIComponent(nombreRestauranteOrdenes)}&fecha_inicio=${fechaInicio}&fecha_fin=${fechaFin}&estado=${estadoOrden}`);
+    const data = await response.json();
+
+    const resultadoDiv = document.getElementById('resultadoOrdenes');
+    resultadoDiv.innerHTML = '';
+
+    if (data.message) {
+        resultadoDiv.textContent = data.message;
+    } else {
+        data.ordenes.forEach(orden => {
+            const ordenDiv = document.createElement('div');
+            ordenDiv.classList.add('orden'); // Añadir clase 'orden' para el estilo visual
+
+            const encabezado = document.createElement('h3');
+            encabezado.textContent = `Usuario: ${orden.nombreUsuario}, Correo: ${orden.correoUsuario}, Fecha: ${orden.fechaOrden}, Total: ${orden.MontoTotal}`;
+            ordenDiv.appendChild(encabezado);
+
+            orden.articulos.forEach(articulo => {
+                const articuloDiv = document.createElement('p');
+                articuloDiv.classList.add('articulo'); // Añadir clase 'articulo' para mayor separación
+                articuloDiv.textContent = `Artículo: ${articulo.nombreArticulo} (Variante ${articulo.variante || 'N/A'}), Precio: ${articulo.precio}`;
+                ordenDiv.appendChild(articuloDiv);
+            });
+
+            // Añadir una línea divisoria visual (esto crea la separación)
+            const linea = document.createElement('hr');
+            ordenDiv.appendChild(linea);
+
+            // Añadir la orden completa al contenedor
+            resultadoDiv.appendChild(ordenDiv);
+        });
+    }
+});
+
+document.getElementById('mostrarGraficoForm').addEventListener('submit', async function (e) {
+    e.preventDefault();
+
+    const nombreRestauranteGrafico = document.getElementById('nombreRestauranteGrafico').value;
+    const fechaInicioGrafico = document.getElementById('fechaInicioGrafico').value;
+    const fechaFinGrafico = document.getElementById('fechaFinGrafico').value;
+    const estadoGrafico = document.getElementById('estadoGrafico').value;
+
+    // Hacer la solicitud para obtener los datos de las órdenes y graficar
+    const response = await fetch(`/api/grafico_platos?nombre=${encodeURIComponent(nombreRestauranteGrafico)}&fecha_inicio=${fechaInicioGrafico}&fecha_fin=${fechaFinGrafico}&estado=${estadoGrafico}`);
+    const data = await response.json();
+
+    if (data.message) {
+        alert(data.message); // Si hay un error, mostrarlo
+    } else {
+        // Crear el gráfico en el frontend usando los datos obtenidos
+        const graficoContainer = document.getElementById('graficoContainer');
+        graficoContainer.innerHTML = '';  // Limpiar cualquier gráfico previo
+
+        // Crear la imagen base64 del gráfico y mostrarla en el contenedor
+        const img = document.createElement('img');
+        img.src = `data:image/png;base64,${data.grafico_base64}`;
+        graficoContainer.appendChild(img);
+    }
+});
+
+document.getElementById('generarGraficoBtn').addEventListener('click', async function () {
+    const response = await fetch('/api/grafico_restaurantes');
+    const data = await response.json();
+
+    if (data.message) {
+        alert(data.message); // Si hay un error, mostrarlo
+    } else {
+        // Crear el gráfico en el frontend usando los datos obtenidos
+        const graficoContainer = document.getElementById('graficoRestaurantesContainer');
+        graficoContainer.innerHTML = '';  // Limpiar cualquier gráfico previo
+
+        // Crear la imagen base64 del gráfico y mostrarla en el contenedor
+        const img = document.createElement('img');
+        img.src = `data:image/png;base64,${data.grafico_base64}`;
+        graficoContainer.appendChild(img);
+    }
+});
+
+
+
+
+
+
+
+

@@ -45,15 +45,15 @@ def clasificar_reseñas_calificacion_ordenado(db, NombreRestaurante, orden):
 
     return list(resultado)
 
-#Muestra las reseñas de un restaurante dado su nombre (las muestra ordenadas por la calificacion en desc o asc)
-def clasificar_reseñas_por_fecha_desc(Resenas, Restaurantes, NombreRestaurante,orden):
+#Muestra las reseñas de un restaurante dado su nombre (las muestra ordenadas por la fecha en desc o asc)
+def clasificar_reseñas_por_fecha_desc(db, NombreRestaurante,orden):
     order=0
     if orden=='asc':
         order=1
     elif orden=='desc':
         order=-1
     # Buscar el restaurante por su nombre y obtener el restauranteId
-    restaurante = Restaurantes.find_one({"nombre": NombreRestaurante})
+    restaurante = db.Restaurantes.find_one({"nombre": NombreRestaurante})
     
     if not restaurante:
         return f"Restaurante con nombre {NombreRestaurante} no encontrado."
@@ -61,7 +61,7 @@ def clasificar_reseñas_por_fecha_desc(Resenas, Restaurantes, NombreRestaurante,
     restaurante_id = restaurante['_id']
     
     # Buscar las reseñas del restaurante por restauranteId y ordenarlas por fecha descendente
-    resultado = Resenas.find(
+    resultado = db.Resenas.find(
         {"restauranteId": restaurante_id}  # Filtrar por restauranteId
     ).sort("fechaResena", order)  # Ordenar por fechaResena en orden descendente
     
@@ -69,13 +69,13 @@ def clasificar_reseñas_por_fecha_desc(Resenas, Restaurantes, NombreRestaurante,
     return list(resultado)
 
 
-def obtener_ordenes(ordenes, nombre_restaurante, fecha_inicio, fecha_fin, estado):
+def obtener_ordenes(db, nombre_restaurante, fecha_inicio, fecha_fin, estado):
     # Convertir las fechas a formato datetime
     fecha_inicio = datetime.strptime(fecha_inicio, "%Y-%m-%d")
     fecha_fin = datetime.strptime(fecha_fin, "%Y-%m-%d")
 
     # Realizar la consulta usando aggregation pipeline
-    resultado = ordenes.aggregate([
+    resultado = db.Ordenes.aggregate([
         {
             # Filtrar por restaurante, fecha y estado
             "$match": {
@@ -115,7 +115,7 @@ def obtener_ordenes(ordenes, nombre_restaurante, fecha_inicio, fecha_fin, estado
 
 
 
-def obtener_ordenes_grafico(ordenes, nombre_restaurante, fecha_inicio, fecha_fin, estado):
+def obtener_ordenes_grafico(db, nombre_restaurante, fecha_inicio, fecha_fin, estado):
     # Convertir las fechas a formato datetime
     try:
         fecha_inicio = datetime.strptime(fecha_inicio, "%Y-%m-%d")
@@ -127,7 +127,7 @@ def obtener_ordenes_grafico(ordenes, nombre_restaurante, fecha_inicio, fecha_fin
     print(f"Fechas de búsqueda: {fecha_inicio} a {fecha_fin}")
 
     # Realizar la consulta usando aggregation pipeline
-    resultado = ordenes.aggregate([
+    resultado = db.Ordenes.aggregate([
         {
             # Filtrar por restaurante, fecha y estado
             "$match": {
@@ -206,9 +206,9 @@ def obtener_ordenes_grafico(ordenes, nombre_restaurante, fecha_inicio, fecha_fin
     """
     return result_list,contador_platos
 
-def top_restaurantes_por_puntuacion_y_ordenes(resenas):
+def top_restaurantes_por_puntuacion_y_ordenes(db):
     # Realizar el query con aggregation pipeline
-    resultado = resenas.aggregate([
+    resultado = db.Resenas.aggregate([
         {
             # Agrupar por restaurante y calcular el promedio de calificación y la cantidad de órdenes
             "$group": {
@@ -244,7 +244,7 @@ def top_restaurantes_por_puntuacion_y_ordenes(resenas):
             "$sort": { "promedio_calificacion": -1 }
         }
     ])
-    print(resultado)
+    #print(resultado)
     # Imprimir el resultado
     #top_restaurantes=list(resultado)
     #for restaurante in top_restaurantes:
@@ -253,6 +253,7 @@ def top_restaurantes_por_puntuacion_y_ordenes(resenas):
 
     # Retornar el resultado como una lista
     return list(resultado)
+
 
 
 def graficar_platos(contador_platos):
@@ -316,9 +317,9 @@ def graficar_promedio_y_ordenes_separadas(top_restaurantes):
 
     # Gráfico 2: Cantidad de Órdenes
     bars2=ax2.barh(nombres_restaurantes, cantidad_ordenes, color='orange')
-    ax2.set_xlabel('Cantidad de Órdenes')
+    ax2.set_xlabel('Cantidad de reseñas')
     ax2.set_ylabel('Restaurantes')
-    ax2.set_title('Cantidad de Órdenes de Restaurantes')
+    ax2.set_title('Cantidad de reseñas por Restaurantes')
     ax2.invert_yaxis()  # Invertir el eje Y para que el restaurante con más órdenes esté arriba
     ax2.bar_label(bars2, padding=5)  # Agregar los valores sobre las barras
 

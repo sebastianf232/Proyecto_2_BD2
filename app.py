@@ -1,11 +1,14 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify,send_file
+import base64
+from io import BytesIO
+import matplotlib.pyplot as plt
 from pymongo import MongoClient
 from crear import crear_usuario, crear_restaurante, crear_articulo_de_menu, crear_orden, crear_resena
 from consultar import consultar_usuarios, consultar_restaurantes, consultar_articulos_menu, consultar_ordenes, consultar_resenas
 from actualizar import actualizar_usuario, actualizar_restaurante, actualizar_articulo_de_menu, actualizar_orden, actualizar_resena
 from eliminar import eliminar_usuario, eliminar_restaurante, eliminar_articulo_de_menu, eliminar_orden, eliminar_resena
 
-from MostrarReseñasYOrdenes import clasificar_reseñas_calificacion_ordenado
+from MostrarReseñasYOrdenes import clasificar_reseñas_calificacion_ordenado,clasificar_reseñas_por_fecha_desc,obtener_ordenes,obtener_ordenes_grafico, graficar_platos,top_restaurantes_por_puntuacion_y_ordenes, graficar_promedio_y_ordenes_separadas
 import json
 from bson import json_util
 
@@ -112,6 +115,94 @@ def obtener_resenas_restaurante():
 
     resultado_json = json.loads(json_util.dumps(resultado))
     return jsonify({"reseñas": resultado_json})
+
+from MostrarReseñasYOrdenes import clasificar_reseñas_por_fecha_desc
+
+@app.route('/api/resenas_restaurante_fecha')
+def obtener_resenas_restaurante_por_fecha():
+    nombre = request.args.get('nombre')
+    orden = request.args.get('orden', 'desc')
+
+    if not nombre:
+        return jsonify({"message": "Debes proporcionar el nombre del restaurante"}), 400
+
+    resultado = clasificar_reseñas_por_fecha_desc(db, nombre, orden)
+
+    if isinstance(resultado, str):  # mensaje de error
+        return jsonify({"message": resultado}), 404
+
+    resultado_json = json.loads(json_util.dumps(resultado))
+    return jsonify({"reseñas": resultado_json})
+
+
+@app.route('/api/ordenes_restaurante')
+def obtener_ordenes_restaurante():
+    nombre = request.args.get('nombre')
+    fecha_inicio = request.args.get('fecha_inicio')
+    fecha_fin = request.args.get('fecha_fin')
+    estado = request.args.get('estado')
+
+    if not nombre or not fecha_inicio or not fecha_fin or not estado:
+        return jsonify({"message": "Debes proporcionar todos los parámetros (nombre, fecha_inicio, fecha_fin, estado)."}), 400
+
+    resultado = obtener_ordenes(db, nombre, fecha_inicio, fecha_fin, estado)
+
+    if isinstance(resultado, str):  # mensaje de error
+        return jsonify({"message": resultado}), 404
+
+    return jsonify({"ordenes": resultado})
+
+@app.route('/api/grafico_platos')
+def obtener_grafico_platos():
+    nombre_restaurante = request.args.get('nombre')
+    fecha_inicio = request.args.get('fecha_inicio')
+    fecha_fin = request.args.get('fecha_fin')
+    estado = request.args.get('estado')
+
+    if not nombre_restaurante or not fecha_inicio or not fecha_fin or not estado:
+        return jsonify({"message": "Debes proporcionar todos los parámetros (nombre, fecha_inicio, fecha_fin, estado)."}), 400
+
+    # Llamamos a la función que obtiene las órdenes y genera el gráfico
+    result_list, contador_platos = obtener_ordenes_grafico(db, nombre_restaurante, fecha_inicio, fecha_fin, estado)
+
+    if not contador_platos:
+        return jsonify({"message": "No se encontraron órdenes que coincidan con los criterios."}), 404
+
+    # Generar el gráfico con la función graficar_platos
+    fig = graficar_platos(contador_platos)
+
+    # Convertir el gráfico a una imagen en formato base64
+    img_stream = BytesIO()
+    fig.savefig(img_stream, format='png')
+    img_stream.seek(0)
+    img_base64 = base64.b64encode(img_stream.read()).decode('utf-8')
+
+    return jsonify({"grafico_base64": img_base64})
+
+
+@app.route('/api/grafico_restaurantes')
+def obtener_grafico_restaurantes():
+    # Llamamos a la función que obtiene el top de restaurantes
+    top_restaurantes = top_restaurantes_por_puntuacion_y_ordenes(db)
+
+    if not top_restaurantes:
+        return jsonify({"message": "No se encontraron restaurantes."}), 404
+
+    # Generar el gráfico con la función graficar_promedio_y_ordenes_separadas
+    fig = graficar_promedio_y_ordenes_separadas(top_restaurantes)
+
+    # Convertir el gráfico a una imagen en formato base64
+    img_stream = BytesIO()
+    fig.savefig(img_stream, format='png')
+    img_stream.seek(0)
+    img_base64 = base64.b64encode(img_stream.read()).decode('utf-8')
+
+    return jsonify({"grafico_base64": img_base64})
+
+
+
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)

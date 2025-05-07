@@ -82,7 +82,7 @@
         <!-- Funcion 1 -->
         <!-- Mostrar Reseñas -->
         <div class="form-section">
-            <h2>Mostrar Reseñas de Restaurante</h2>
+            <h2>Mostrar reseñas de restaurante ordenado por calificación</h2>
             <form id="mostrarResenasForm">
                 <label for="nombreRestaurante">Nombre del Restaurante:</label>
                 <input type="text" id="nombreRestaurante" name="nombreRestaurante" required>
@@ -97,7 +97,85 @@
             </form>
             <div id="resultadoResenas"></div>
         </div>
-        <!-- Funcion 1 -->
+        <!-- Funcion 2 -->
+         <!-- Mostrar Reseñas por Fecha -->
+        <div class="form-section">
+            <h2>Mostrar reseñas de restaurante ordenado por fecha</h2>
+            <form id="mostrarResenasPorFechaForm">
+                <label for="nombreRestauranteFecha">Nombre del Restaurante:</label>
+                <input type="text" id="nombreRestauranteFecha" name="nombreRestauranteFecha" required>
+
+                <label for="ordenFecha">Orden:</label>
+                <select id="ordenFecha" name="ordenFecha">
+                    <option value="desc">Más reciente a más antigua</option>
+                    <option value="asc">Más antigua a más reciente</option>
+                </select>
+
+                <button type="submit">Ver Reseñas</button>
+            </form>
+            <div id="resultadoResenasPorFecha"></div>
+        </div>
+        <!-- Mostrar Órdenes por Restaurante y Fecha -->
+        <div class="form-section">
+            <h2>Mostrar órdenes de restaurante</h2>
+            <form id="mostrarOrdenesForm">
+                <label for="nombreRestauranteOrdenes">Nombre del Restaurante:</label>
+                <input type="text" id="nombreRestauranteOrdenes" name="nombreRestauranteOrdenes" required>
+
+                <label for="fechaInicio">Fecha de Inicio:</label>
+                <input type="date" id="fechaInicio" name="fechaInicio" required>
+
+                <label for="fechaFin">Fecha de Fin:</label>
+                <input type="date" id="fechaFin" name="fechaFin" required>
+
+                <label for="estadoOrden">Estado de la Orden:</label>
+                <select id="estadoOrden" name="estadoOrden">
+                    <option value="Pendiente">Pendiente</option>
+                    <option value="En preparación">En preparación</option>
+                    <option value="Entregado">Entregado</option>
+                    <option value="Cancelado">Cancelado</option>
+                </select>
+
+                <button type="submit">Ver Órdenes</button>
+            </form>
+            <div id="resultadoOrdenes"></div>
+        </div>
+        <!-- Mostrar Gráfico de Platos -->
+        <div class="form-section">
+            <h2>¿Que platos han generado más dinero? ¿Cúantos he vendido?</h2>
+            <form id="mostrarGraficoForm">
+                <label for="nombreRestauranteGrafico">Nombre del Restaurante:</label>
+                <input type="text" id="nombreRestauranteGrafico" name="nombreRestauranteGrafico" required>
+
+                <label for="fechaInicioGrafico">Fecha de Inicio:</label>
+                <input type="date" id="fechaInicioGrafico" name="fechaInicioGrafico" required>
+
+                <label for="fechaFinGrafico">Fecha de Fin:</label>
+                <input type="date" id="fechaFinGrafico" name="fechaFinGrafico" required>
+
+                <label for="estadoGrafico">Estado de la Orden:</label>
+                <select id="estadoGrafico" name="estadoGrafico">
+                    <option value="Pendiente">Pendiente</option>
+                    <option value="En preparación">En preparación</option>
+                    <option value="Entregado">Entregado</option>
+                    <option value="Cancelado">Cancelado</option>
+                </select>
+
+                <button type="submit">Generar Gráfico</button>
+            </form>
+            <div id="graficoContainer"></div> <!-- Aquí se mostrará el gráfico -->
+        </div>
+        <!-- Mostrar Gráfico de Restaurantes por Puntuación y Órdenes -->
+        <div class="form-section">
+            <h2>Mostrar gráfico de restaurantes mejor reseñados</h2>
+            <button id="generarGraficoBtn">Generar Gráfico</button>
+            <div id="graficoRestaurantesContainer"></div> <!-- Aquí se mostrará el gráfico -->
+</div>
+
+
+
+
+
 
 
     </div>
