@@ -67,8 +67,8 @@ async function updateConsultForm() {
     const coleccion = document.getElementById('coleccionConsulta').value;
     const formConsult = document.getElementById('form-consultar');
     formConsult.innerHTML = `
-        <label for="filtro">Filtro (JSON):</label><input type="text" id="filtro" placeholder="Ej: {nombre: 'Juan'}">
-        <label for="proyeccion">Proyección (JSON):</label><input type="text" id="proyeccion" placeholder="Ej: {nombre: 1, correo: 1}">
+        <label for="filtro">Filtro (JSON):</label><input type="text" id="filtro" placeholder="Ej: {'nombre': 'Juan'}">
+        <label for="proyeccion">Proyección (JSON):</label><input type="text" id="proyeccion" placeholder="Ej: {'nombre': 1, 'correo': 1}">
         <label for="skip">Skip:</label><input type="number" id="skip" value="0">
         <label for="limit">Limit:</label><input type="number" id="limit" value="10">
         <label for="orden">Ordenar por:</label><input type="text" id="orden" placeholder="Ej: nombre">

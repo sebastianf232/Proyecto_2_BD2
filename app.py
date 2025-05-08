@@ -60,6 +60,10 @@ def get_articulos_menu():
 def get_ordenes():
     return consultar_ordenes(request, db)
 
+@app.route('/api/resenas', methods=['GET'])
+def get_resenas():
+    return consultar_resenas(request, db)
+
 @app.route('/api/usuarios/<id>', methods=['PUT'])
 def put_usuario(id):
     app.logger.debug(f"Actualizando usuario con ID: {id}")
