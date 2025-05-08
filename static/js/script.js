@@ -261,13 +261,47 @@ function updateUpdateForm() {
 
 
 // Función para eliminar elementos (formulario de "Eliminar")
-async function updateDeleteForm() {
-    const coleccion = document.getElementById('coleccionEliminar').value;
-    const formDelete = document.getElementById('form-eliminar');
-    formDelete.innerHTML = `
-        <label for="idEliminar">ID del Elemento a Eliminar:</label><input type="text" id="idEliminar" required>
-    `;
-}
+document.addEventListener('DOMContentLoaded', () => {
+    function updateDeleteForm() {
+      const formDelete = document.getElementById('form-eliminar');
+      formDelete.innerHTML = `
+        <label for="idEliminar">ID del elemento a eliminar:</label>
+        <input type="text" id="idEliminar" required>
+      `;
+    }
+  
+    const selectColeccion = document.getElementById('coleccionEliminar');
+    selectColeccion.addEventListener('change', updateDeleteForm);
+    updateDeleteForm();
+  
+    // Manejar envío de eliminación
+    document.getElementById('eliminarElementoForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const coleccion = selectColeccion.value;
+      const id = document.getElementById('idEliminar').value.trim();
+      if (!id) {
+        return alert('Debes ingresar un ID válido para eliminar.');
+      }
+  
+      const url = `${apiUrl}/${coleccion.toLowerCase()}/${id}`;
+      console.log('Enviando DELETE a:', url);
+  
+      try {
+        const response = await fetch(url, { method: 'DELETE' });
+        const result = await response.json();
+        console.log('Respuesta DELETE:', response.status, result);
+  
+        if (!response.ok) {
+          return alert(`Error ${response.status}: ${result.message}`);
+        }
+        alert(result.message);
+      } catch (error) {
+        console.error('Error al eliminar:', error);
+        alert('Ocurrió un error al eliminar. Revisa la consola.');
+      }
+    });
+  });
+  
 
 // Crear elementos
 document.getElementById('crearElementoForm').addEventListener('submit', async (e) => {
@@ -358,24 +392,7 @@ document.getElementById('consultarElementoForm').addEventListener('submit', asyn
 
 
 
-
-// Eliminar elementos
-document.getElementById('eliminarElementoForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-
-    const coleccion = document.getElementById('coleccionEliminar').value;
-    const idEliminar = document.getElementById('idEliminar').value;
-
-    const response = await fetch(`${apiUrl}/${coleccion.toLowerCase()}/${idEliminar}`, {
-        method: 'DELETE',
-    });
-
-    const data = await response.json();
-    alert('Elemento eliminado con éxito');
-    console.log(data);
-});
-
-
+// mostrar resenias
 document.getElementById('mostrarResenasForm').addEventListener('submit', async function (e) {
     e.preventDefault();
 

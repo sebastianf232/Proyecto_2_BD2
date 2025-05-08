@@ -6,7 +6,7 @@ from bson import ObjectId
 def connect_to_mongo():
     mongo_uri = 'mongodb+srv://dia21066:CMSOw7YTLnPTsdEp@cluster0.a4fng.mongodb.net/?retryWrites=true&w=majority'
     client = MongoClient(mongo_uri)
-    db = client['Proyecto_2']  # Reemplaza con el nombre de tu base de datos
+    db = client['Proyecto_2'] 
     return db
 
 def _filtrar_campos(data):

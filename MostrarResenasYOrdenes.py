@@ -10,10 +10,10 @@ uri = "mongodb+srv://adrian:CmKZDuWRuJmoQfQc@cluster0.a4fng.mongodb.net/?retryWr
 client = MongoClient(uri)
 
 # Seleccionar la base de datos
-db = client['Proyecto_2']  # Reemplaza con tu base de datos
+db = client['Proyecto_2'] 
 
 # Acceder a una colección
-Resenas = db['Resenas']  # Reemplaza con tu colección
+Resenas = db['Resenas']  
 
 Restaurantes= db['Restaurantes']
 
@@ -21,7 +21,7 @@ Ordenes=db['Ordenes']
 
 """
 #Muestra las reseñas de un restaurante dado el nombre del restaurante (las muestra en asc o desc por calificacion)
-def clasificar_reseñas_calificacion_ordenado(db, NombreRestaurante, orden):
+def clasificar_resenas_calificacion_ordenado(db, NombreRestaurante, orden):
     order=0
     if orden=='asc':
         order=1
@@ -46,7 +46,7 @@ def clasificar_reseñas_calificacion_ordenado(db, NombreRestaurante, orden):
     return list(resultado)
 
 #Muestra las reseñas de un restaurante dado su nombre (las muestra ordenadas por la fecha en desc o asc)
-def clasificar_reseñas_por_fecha_desc(db, NombreRestaurante,orden):
+def clasificar_resenas_por_fecha_desc(db, NombreRestaurante,orden):
     order=0
     if orden=='asc':
         order=1

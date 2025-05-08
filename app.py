@@ -8,7 +8,7 @@ from consultar import consultar_usuarios, consultar_restaurantes, consultar_arti
 from actualizar import actualizar_usuario, actualizar_restaurante, actualizar_articulo_de_menu, actualizar_orden, actualizar_resena
 from eliminar import eliminar_usuario, eliminar_restaurante, eliminar_articulo_de_menu, eliminar_orden, eliminar_resena
 
-from MostrarReseñasYOrdenes import clasificar_reseñas_calificacion_ordenado,clasificar_reseñas_por_fecha_desc,obtener_ordenes,obtener_ordenes_grafico, graficar_platos,top_restaurantes_por_puntuacion_y_ordenes, graficar_promedio_y_ordenes_separadas
+from MostrarResenasYOrdenes import clasificar_resenas_calificacion_ordenado,clasificar_resenas_por_fecha_desc,obtener_ordenes,obtener_ordenes_grafico, graficar_platos,top_restaurantes_por_puntuacion_y_ordenes, graficar_promedio_y_ordenes_separadas
 import json
 from bson import json_util
 
@@ -65,45 +65,46 @@ def put_usuario(id):
     app.logger.debug(f"Actualizando usuario con ID: {id}")
     return actualizar_usuario(request, db)
 
-# Ruta para actualizar restaurantes
 @app.route('/api/restaurantes/<id>', methods=['PUT'])
 def put_restaurante(id):
     return actualizar_restaurante(request, db)
 
-# Ruta para actualizar artículos de menú
 @app.route('/api/articulos_menu/<id>', methods=['PUT'])
 def put_articulo_de_menu(id):
     return actualizar_articulo_de_menu(request, db)
 
-# Ruta para actualizar órdenes
 @app.route('/api/ordenes/<id>', methods=['PUT'])
 def put_orden(id):
     return actualizar_orden(request, db)
 
-# Ruta para actualizar reseñas
 @app.route('/api/resenas/<id>', methods=['PUT'])
 def put_resena(id):
     return actualizar_resena(request, db)
 
 @app.route('/api/usuarios/<id>', methods=['DELETE'])
 def delete_usuario(id):
-    return eliminar_usuario(id, db)
+    app.logger.debug(f"DELETE /api/usuarios/{id}")
+    return eliminar_usuario(request, db)
 
 @app.route('/api/restaurantes/<id>', methods=['DELETE'])
 def delete_restaurante(id):
-    return eliminar_restaurante(id, db)
+    app.logger.debug(f"DELETE /api/restaurantes/{id}")
+    return eliminar_restaurante(request, db)
 
 @app.route('/api/articulos_menu/<id>', methods=['DELETE'])
-def delete_articulo_de_menu(id):
-    return eliminar_articulo_de_menu(id, db)
+def delete_articulo(id):
+    app.logger.debug(f"DELETE /api/articulos_menu/{id}")
+    return eliminar_articulo_de_menu(request, db)
 
 @app.route('/api/ordenes/<id>', methods=['DELETE'])
 def delete_orden(id):
-    return eliminar_orden(id, db)
+    app.logger.debug(f"DELETE /api/ordenes/{id}")
+    return eliminar_orden(request, db)
 
 @app.route('/api/resenas/<id>', methods=['DELETE'])
 def delete_resena(id):
-    return eliminar_resena(id, db)
+    app.logger.debug(f"DELETE /api/resenas/{id}")
+    return eliminar_resena(request, db)
 
 @app.route('/api/resenas_restaurante')
 def obtener_resenas_restaurante():
@@ -113,7 +114,7 @@ def obtener_resenas_restaurante():
     if not nombre:
         return jsonify({"message": "Debes proporcionar el nombre del restaurante"}), 400
 
-    resultado = clasificar_reseñas_calificacion_ordenado(db, nombre, orden)
+    resultado = clasificar_resenas_calificacion_ordenado(db, nombre, orden)
 
     if isinstance(resultado, str):  # mensaje de error
         return jsonify({"message": resultado}), 404
@@ -121,7 +122,7 @@ def obtener_resenas_restaurante():
     resultado_json = json.loads(json_util.dumps(resultado))
     return jsonify({"reseñas": resultado_json})
 
-from MostrarReseñasYOrdenes import clasificar_reseñas_por_fecha_desc
+from MostrarResenasYOrdenes import clasificar_resenas_por_fecha_desc
 
 @app.route('/api/resenas_restaurante_fecha')
 def obtener_resenas_restaurante_por_fecha():
@@ -131,7 +132,7 @@ def obtener_resenas_restaurante_por_fecha():
     if not nombre:
         return jsonify({"message": "Debes proporcionar el nombre del restaurante"}), 400
 
-    resultado = clasificar_reseñas_por_fecha_desc(db, nombre, orden)
+    resultado = clasificar_resenas_por_fecha_desc(db, nombre, orden)
 
     if isinstance(resultado, str):  # mensaje de error
         return jsonify({"message": resultado}), 404
