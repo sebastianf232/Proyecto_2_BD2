@@ -261,47 +261,51 @@ function updateUpdateForm() {
 
 
 // Función para eliminar elementos (formulario de "Eliminar")
-document.addEventListener('DOMContentLoaded', () => {
-    function updateDeleteForm() {
-      const formDelete = document.getElementById('form-eliminar');
-      formDelete.innerHTML = `
-        <label for="idEliminar">ID del elemento a eliminar:</label>
-        <input type="text" id="idEliminar" required>
-      `;
+const selectColeccion = document.getElementById('coleccionEliminar');
+const formContainer = document.getElementById('form-eliminar');
+const deleteForm = document.getElementById('eliminarElementoForm');
+
+// Función para renderizar el campo de ID en el formulario
+function updateDeleteForm() {
+  formContainer.innerHTML = `
+    <label for="idEliminar">ID del elemento a eliminar:</label>
+    <input type="text" id="idEliminar" required />
+  `;
+}
+
+// Vincular evento de cambio y renderizar inicialmente\selectColeccion.addEventListener('change', updateDeleteForm);
+updateDeleteForm();
+
+// Manejar envío del formulario de eliminación
+deleteForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const coleccion = selectColeccion.value.toLowerCase();
+  const idEliminar = document.getElementById('idEliminar').value.trim();
+  if (!idEliminar) {
+    alert('Debes ingresar un ID válido para eliminar.');
+    return;
+  }
+
+  const url = `${apiUrl}/${coleccion}/${idEliminar}`;
+  console.log('Enviando DELETE a:', url);
+
+  try {
+    const response = await fetch(url, { method: 'DELETE' });
+    const result = await response.json();
+    console.log('Respuesta DELETE:', response.status, result);
+
+    if (!response.ok) {
+      alert(`Error ${response.status}: ${result.message}`);
+    } else {
+      alert(result.message);
     }
+  } catch (error) {
+    console.error('Error al eliminar:', error);
+    alert('Ocurrió un error al eliminar. Revisa la consola.');
+  }
+});
   
-    const selectColeccion = document.getElementById('coleccionEliminar');
-    selectColeccion.addEventListener('change', updateDeleteForm);
-    updateDeleteForm();
-  
-    // Manejar envío de eliminación
-    document.getElementById('eliminarElementoForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const coleccion = selectColeccion.value;
-      const id = document.getElementById('idEliminar').value.trim();
-      if (!id) {
-        return alert('Debes ingresar un ID válido para eliminar.');
-      }
-  
-      const url = `${apiUrl}/${coleccion.toLowerCase()}/${id}`;
-      console.log('Enviando DELETE a:', url);
-  
-      try {
-        const response = await fetch(url, { method: 'DELETE' });
-        const result = await response.json();
-        console.log('Respuesta DELETE:', response.status, result);
-  
-        if (!response.ok) {
-          return alert(`Error ${response.status}: ${result.message}`);
-        }
-        alert(result.message);
-      } catch (error) {
-        console.error('Error al eliminar:', error);
-        alert('Ocurrió un error al eliminar. Revisa la consola.');
-      }
-    });
-  });
-  
+
 
 // Crear elementos
 document.getElementById('crearElementoForm').addEventListener('submit', async (e) => {
