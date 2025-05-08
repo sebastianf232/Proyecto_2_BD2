@@ -62,20 +62,25 @@ def get_ordenes():
 
 @app.route('/api/usuarios/<id>', methods=['PUT'])
 def put_usuario(id):
+    app.logger.debug(f"Actualizando usuario con ID: {id}")
     return actualizar_usuario(request, db)
 
+# Ruta para actualizar restaurantes
 @app.route('/api/restaurantes/<id>', methods=['PUT'])
 def put_restaurante(id):
     return actualizar_restaurante(request, db)
 
+# Ruta para actualizar artículos de menú
 @app.route('/api/articulos_menu/<id>', methods=['PUT'])
 def put_articulo_de_menu(id):
     return actualizar_articulo_de_menu(request, db)
 
+# Ruta para actualizar órdenes
 @app.route('/api/ordenes/<id>', methods=['PUT'])
 def put_orden(id):
     return actualizar_orden(request, db)
 
+# Ruta para actualizar reseñas
 @app.route('/api/resenas/<id>', methods=['PUT'])
 def put_resena(id):
     return actualizar_resena(request, db)

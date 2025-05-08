@@ -80,7 +80,7 @@ function updateUpdateForm() {
     const coleccion = document.getElementById('coleccionActualizar').value;
     const formUpdate = document.getElementById('form-actualizar');
     formUpdate.innerHTML = '';
-  
+
     if (coleccion === 'Usuarios') {
       formUpdate.innerHTML = `
         <label for="idActualizar">ID Usuario:</label>
@@ -98,7 +98,7 @@ function updateUpdateForm() {
         <label for="fechaNacimientoActualizar">Fecha Nacimiento:</label>
         <input type="date" id="fechaNacimientoActualizar">
       `;
-  
+
     } else if (coleccion === 'Restaurantes') {
       formUpdate.innerHTML = `
         <label for="idRestauranteActualizar">ID Restaurante:</label>
@@ -122,7 +122,7 @@ function updateUpdateForm() {
         <label for="fechaRegistroActualizar">Fecha Registro:</label>
         <input type="date" id="fechaRegistroActualizar">
       `;
-  
+
     } else if (coleccion === 'Articulos_Menu') {
       formUpdate.innerHTML = `
         <label for="idArticuloActualizar">ID Artículo:</label>
@@ -133,14 +133,14 @@ function updateUpdateForm() {
         <input type="number" id="precioActualizar">
         <label for="descripcionArticuloActualizar">Descripción:</label>
         <input type="text" id="descripcionArticuloActualizar">
-        <label for="categoriaArticuloActualizar">Categoría:</label>
-        <input type="text" id="categoriaArticuloActualizar">
+        <label for="categoriaActualizar">Categoría:</label>
+        <input type="text" id="categoriaActualizar">
         <label for="restauranteIdActualizar">ID Restaurante:</label>
         <input type="text" id="restauranteIdActualizar">
         <label for="disponibilidadActualizar">Disponibilidad:</label>
         <input type="checkbox" id="disponibilidadActualizar" name="disponibilidadActualizar" value="true">
       `;
-  
+
     } else if (coleccion === 'Ordenes') {
       formUpdate.innerHTML = `
         <label for="idOrdenActualizar">ID Orden:</label>
@@ -154,7 +154,7 @@ function updateUpdateForm() {
         <label for="totalOrdenActualizar">Total:</label>
         <input type="number" id="totalOrdenActualizar">
       `;
-  
+
     } else if (coleccion === 'Resenas') {
       formUpdate.innerHTML = `
         <label for="idResenaActualizar">ID Reseña:</label>
@@ -170,6 +170,95 @@ function updateUpdateForm() {
       `;
     }
   }
+
+  document.getElementById('coleccionActualizar').addEventListener('change', updateUpdateForm);
+  updateUpdateForm();
+
+  // Manejar envío de actualización
+  document.getElementById('actualizarElementoForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const coleccion = document.getElementById('coleccionActualizar').value;
+    let idActualizar;
+    const data = {};
+
+    // Obtener campos según la colección
+    if (coleccion === 'Usuarios') {
+      idActualizar = document.getElementById('idActualizar').value;
+      data.nombre = document.getElementById('nombreActualizar').value;
+      data.correo = document.getElementById('correoActualizar').value;
+      data.direccion = document.getElementById('direccionActualizar').value;
+      data.telefono = document.getElementById('telefonoActualizar').value;
+      data.fechaRegistro = document.getElementById('fechaRegistroActualizar').value;
+      data.fechaNacimiento = document.getElementById('fechaNacimientoActualizar').value;
+    } else if (coleccion === 'Restaurantes') {
+      idActualizar = document.getElementById('idRestauranteActualizar').value;
+      data.nombre = document.getElementById('nombreRestauranteActualizar').value;
+      data.descripcion = document.getElementById('descripcionRestauranteActualizar').value;
+      data.categoria = document.getElementById('categoriaRestauranteActualizar').value;
+      data.calle = document.getElementById('calleActualizar').value;
+      data.ciudad = document.getElementById('ciudadActualizar').value;
+      data.telefono = document.getElementById('telefonoActualizar').value;
+      data.longitud = parseFloat(document.getElementById('longitudActualizar').value);
+      data.latitud = parseFloat(document.getElementById('latitudActualizar').value);
+      data.fechaRegistro = document.getElementById('fechaRegistroActualizar').value;
+    } else if (coleccion === 'Articulos_Menu') {
+      idActualizar = document.getElementById('idArticuloActualizar').value;
+      data.nombre = document.getElementById('nombreArticuloActualizar').value;
+      data.precio = document.getElementById('precioActualizar').value;
+      data.descripcion = document.getElementById('descripcionArticuloActualizar').value;
+        data.categoria = document.getElementById('categoriaActualizar').value;
+        data.restauranteId = document.getElementById('restauranteIdActualizar').value;
+        data.disponibilidad = document.getElementById('disponibilidadActualizar').checked;
+    } else if (coleccion === 'Ordenes') {
+      idActualizar = document.getElementById('idOrdenActualizar').value;
+      data.usuarioId = document.getElementById('usuarioIdOrdenActualizar').value;
+      data.restauranteId = document.getElementById('restauranteIdOrdenActualizar').value;
+      try {
+        data.items = JSON.parse(document.getElementById('itemsOrdenActualizar').value);
+      } catch (err) {
+        return alert("Items debe ser un arreglo JSON válido, por ejemplo: [\"id1\", \"id2\"]");
+      }
+      data.total = document.getElementById('totalOrdenActualizar').value;
+    } else if (coleccion === 'Resenas') {
+      idActualizar = document.getElementById('idResenaActualizar').value;
+      data.usuarioIdResena = document.getElementById('usuarioIdResenaActualizar').value;
+      data.restauranteIdResena = document.getElementById('restauranteIdResenaActualizar').value;
+      data.contenido = document.getElementById('contenidoResenaActualizar').value;
+      data.calificacion = document.getElementById('calificacionResenaActualizar').value;
+    }
+
+    // Debugging: log URL y payload
+    const url = `${apiUrl}/${coleccion.toLowerCase()}/${idActualizar}`;
+    console.log('Enviando PUT a:', url);
+    console.log('Payload:', data);
+
+    if (!idActualizar) {
+      return alert('Debes indicar un ID válido para actualizar.');
+    }
+
+    try {
+      const response = await fetch(url, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+      console.log('Status:', response.status);
+      const result = await response.json();
+      console.log('Respuesta:', result);
+
+      if (!response.ok) {
+        alert(`Error ${response.status}: ${result.message}`);
+      } else {
+        alert(result.message);
+      }
+    } catch (error) {
+      console.error('Fetch error:', error);
+      alert('Ocurrió un error al actualizar. Revisa la consola para más detalles.');
+    }
+  });
+
+
 
 // Función para eliminar elementos (formulario de "Eliminar")
 async function updateDeleteForm() {
@@ -265,88 +354,7 @@ document.getElementById('consultarElementoForm').addEventListener('submit', asyn
     const resultadosDiv = document.getElementById('resultados');
     resultadosDiv.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
 });
-// Actualizar elementos
-document.getElementById('coleccionActualizar').addEventListener('change', updateUpdateForm);
-updateUpdateForm();  // Inicializar formulario
 
-// Manejar envío de actualización
-document.getElementById('actualizarElementoForm').addEventListener('submit', async (e) => {
-  e.preventDefault();
-
-  const coleccion = document.getElementById('coleccionActualizar').value;
-  let idActualizar;
-  const data = {};
-
-  // Obtener el ID según la colección
-  if (coleccion === 'Usuarios') {
-    idActualizar = document.getElementById('idActualizar').value;
-    data.nombre = document.getElementById('nombreActualizar').value;
-    data.correo = document.getElementById('correoActualizar').value;
-    data.direccion = document.getElementById('direccionActualizar').value;
-    data.telefono = document.getElementById('telefonoActualizar').value;
-    data.fechaRegistro = document.getElementById('fechaRegistroActualizar').value;
-    data.fechaNacimiento = document.getElementById('fechaNacimientoActualizar').value;
-
-  } else if (coleccion === 'Restaurantes') {
-    idActualizar = document.getElementById('idRestauranteActualizar').value;
-    data.nombre = document.getElementById('nombreRestauranteActualizar').value;
-    data.descripcion = document.getElementById('descripcionRestauranteActualizar').value;
-    data.categoria = document.getElementById('categoriaRestauranteActualizar').value;
-    data.calle = document.getElementById('calleActualizar').value;
-    data.ciudad = document.getElementById('ciudadActualizar').value;
-    data.telefono = document.getElementById('telefonoActualizar').value;
-    data.longitud = parseFloat(document.getElementById('longitudActualizar').value);
-    data.latitud = parseFloat(document.getElementById('latitudActualizar').value);
-    data.fechaRegistro = document.getElementById('fechaRegistroActualizar').value;
-
-  } else if (coleccion === 'Articulos_Menu') {
-    idActualizar = document.getElementById('idArticuloActualizar').value;
-    data.nombre = document.getElementById('nombreArticuloActualizar').value;
-    data.precio = document.getElementById('precioActualizar').value;
-    data.descripcion = document.getElementById('descripcionArticuloActualizar').value;
-    data.categoria = document.getElementById('categoriaArticuloActualizar').value;
-    data.restauranteId = document.getElementById('restauranteIdActualizar').value;
-    data.disponibilidad = document.getElementById('disponibilidadActualizar').checked;
-
-  } else if (coleccion === 'Ordenes') {
-    idActualizar = document.getElementById('idOrdenActualizar').value;
-    data.usuarioId = document.getElementById('usuarioIdOrdenActualizar').value;
-    data.restauranteId = document.getElementById('restauranteIdOrdenActualizar').value;
-    try {
-      data.items = JSON.parse(document.getElementById('itemsOrdenActualizar').value);
-    } catch (err) {
-      return alert("Items debe ser un arreglo JSON válido, por ejemplo: [\"id1\", \"id2\"]");
-    }
-    data.total = document.getElementById('totalOrdenActualizar').value;
-
-  } else if (coleccion === 'Resenas') {
-    idActualizar = document.getElementById('idResenaActualizar').value;
-    data.usuarioIdResena = document.getElementById('usuarioIdResenaActualizar').value;
-    data.restauranteIdResena = document.getElementById('restauranteIdResenaActualizar').value;
-    data.contenido = document.getElementById('contenidoResenaActualizar').value;
-    data.calificacion = document.getElementById('calificacionResenaActualizar').value;
-  }
-
-  // Verificar que exista un ID
-  if (!idActualizar) {
-    return alert('Debes indicar un ID válido para actualizar.');
-  }
-
-  // Realizar petición PUT
-  try {
-    const response = await fetch(`${apiUrl}/${coleccion.toLowerCase()}/${idActualizar}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data)
-    });
-    const result = await response.json();
-    alert(result.message);
-    console.log(result);
-  } catch (error) {
-    console.error(error);
-    alert('Ocurrió un error al actualizar. Revisa la consola para más detalles.');
-  }
-});
 
 
 
