@@ -265,7 +265,7 @@ const selectColeccion = document.getElementById('coleccionEliminar');
 const formContainer = document.getElementById('form-eliminar');
 const deleteForm = document.getElementById('eliminarElementoForm');
 
-// Función para renderizar el campo de ID en el formulario
+
 function updateDeleteForm() {
   formContainer.innerHTML = `
     <label for="idEliminar">ID del elemento a eliminar:</label>
@@ -273,7 +273,6 @@ function updateDeleteForm() {
   `;
 }
 
-// Vincular evento de cambio y renderizar inicialmente\selectColeccion.addEventListener('change', updateDeleteForm);
 updateDeleteForm();
 
 // Manejar envío del formulario de eliminación
@@ -305,7 +304,6 @@ deleteForm.addEventListener('submit', async (e) => {
   }
 });
   
-
 
 // Crear elementos
 document.getElementById('crearElementoForm').addEventListener('submit', async (e) => {
