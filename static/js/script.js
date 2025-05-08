@@ -54,7 +54,7 @@ async function updateCreateForm() {
         formCreate.innerHTML = `
             <label for="usuarioId">ID Usuario:</label><input type="text" id="usuarioId" required>
             <label for="restauranteId">ID Restaurante:</label><input type="text" id="restauranteId" required>
-            <label for="contenido">Contenido de la Reseña:</label><input type="text" id="contenido" required>
+            <label for="comentario">Contenido de la Reseña:</label><input type="text" id="comentario" required>
             <label for="calificacion">Calificación (1-5):</label><input type="number" id="calificacion" name="calificacion" min="0" max="5" step="any" required>
             <label for="ordenId">ID Orden:</label><input type="text" id="ordenId" required>
             <label for="fechaResena">Fecha Reseña:</label><input type="date" id="fechaResena" required>
@@ -353,10 +353,12 @@ document.getElementById('crearElementoForm').addEventListener('submit', async (e
     }
 
      else if (coleccion === 'Resenas') {
-        data.usuarioIdResena = document.getElementById('usuarioIdResena').value;
-        data.restauranteIdResena = document.getElementById('restauranteIdResena').value;
-        data.contenido = document.getElementById('contenido').value;
+        data.usuarioId = document.getElementById('usuarioId').value;
+        data.restauranteId = document.getElementById('restauranteId').value;
+        data.ordenId = document.getElementById('ordenId').value;
         data.calificacion = document.getElementById('calificacion').value;
+        data.comentario = document.getElementById('comentario').value;
+        data.fechaResena = document.getElementById('fechaResena').value;
     }
 
     // Asegúrate de que la URL esté correcta dependiendo de la colección seleccionada
