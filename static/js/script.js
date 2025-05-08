@@ -76,38 +76,101 @@ async function updateConsultForm() {
 }
 
 // Función para actualizar elementos (formulario de "Actualizar")
-async function updateUpdateForm() {
+function updateUpdateForm() {
     const coleccion = document.getElementById('coleccionActualizar').value;
     const formUpdate = document.getElementById('form-actualizar');
-    formUpdate.innerHTML = '';  // Limpiar el formulario actual
-
-    // Dependiendo de la colección seleccionada, se muestran los campos correspondientes
+    formUpdate.innerHTML = '';
+  
     if (coleccion === 'Usuarios') {
-        formUpdate.innerHTML = `
-            <label for="idActualizar">ID Usuario:</label><input type="text" id="idActualizar" required>
-            <label for="nombreActualizar">Nombre:</label><input type="text" id="nombreActualizar">
-            <label for="correoActualizar">Correo:</label><input type="email" id="correoActualizar">
-            <label for="direccionActualizar">Dirección:</label><input type="text" id="direccionActualizar">
-            <label for="telefonoActualizar">Teléfono:</label><input type="text" id="telefonoActualizar">
-            <label for="fechaRegistroActualizar">Fecha Registro:</label><input type="date" id="fechaRegistroActualizar">
-            <label for="fechaNacimientoActualizar">Fecha Nacimiento:</label><input type="date" id="fechaNacimientoActualizar">
-        `;
+      formUpdate.innerHTML = `
+        <label for="idActualizar">ID Usuario:</label>
+        <input type="text" id="idActualizar" required>
+        <label for="nombreActualizar">Nombre:</label>
+        <input type="text" id="nombreActualizar">
+        <label for="correoActualizar">Correo:</label>
+        <input type="email" id="correoActualizar">
+        <label for="direccionActualizar">Dirección:</label>
+        <input type="text" id="direccionActualizar">
+        <label for="telefonoActualizar">Teléfono:</label>
+        <input type="text" id="telefonoActualizar">
+        <label for="fechaRegistroActualizar">Fecha Registro:</label>
+        <input type="date" id="fechaRegistroActualizar">
+        <label for="fechaNacimientoActualizar">Fecha Nacimiento:</label>
+        <input type="date" id="fechaNacimientoActualizar">
+      `;
+  
     } else if (coleccion === 'Restaurantes') {
-        formUpdate.innerHTML = `
-            <label for="idRestauranteActualizar">ID Restaurante:</label><input type="text" id="idRestauranteActualizar" required>
-            <label for="nombreRestauranteActualizar">Nombre Restaurante:</label><input type="text" id="nombreRestauranteActualizar">
-            <label for="descripcionRestauranteActualizar">Descripción:</label><input type="text" id="descripcionRestauranteActualizar">
-            <label for="categoriaRestauranteActualizar">Categoría:</label><input type="text" id="categoriaRestauranteActualizar">
-            <label for="calleActualizar">Calle:</label><input type="text" id="calleActualizar">
-            <label for="ciudadActualizar">Ciudad:</label><input type="text" id="ciudadActualizar">
-            <label for="telefonoActualizar">Teléfono:</label><input type="text" id="telefonoActualizar">
-            <label for="longitudActualizar">Longitud:</label><input type="number" id="longitudActualizar" step="any">
-            <label for="latitudActualizar">Latitud:</label><input type="number" id="latitudActualizar" step="any">
-            <label for="fechaRegistroActualizar">Fecha Registro:</label><input type="date" id="fechaRegistroActualizar">
-        `;
-    } 
-    // Continuar con otros casos si es necesario...
-}
+      formUpdate.innerHTML = `
+        <label for="idRestauranteActualizar">ID Restaurante:</label>
+        <input type="text" id="idRestauranteActualizar" required>
+        <label for="nombreRestauranteActualizar">Nombre Restaurante:</label>
+        <input type="text" id="nombreRestauranteActualizar">
+        <label for="descripcionRestauranteActualizar">Descripción:</label>
+        <input type="text" id="descripcionRestauranteActualizar">
+        <label for="categoriaRestauranteActualizar">Categoría:</label>
+        <input type="text" id="categoriaRestauranteActualizar">
+        <label for="calleActualizar">Calle:</label>
+        <input type="text" id="calleActualizar">
+        <label for="ciudadActualizar">Ciudad:</label>
+        <input type="text" id="ciudadActualizar">
+        <label for="telefonoActualizar">Teléfono:</label>
+        <input type="text" id="telefonoActualizar">
+        <label for="longitudActualizar">Longitud:</label>
+        <input type="number" id="longitudActualizar" step="any">
+        <label for="latitudActualizar">Latitud:</label>
+        <input type="number" id="latitudActualizar" step="any">
+        <label for="fechaRegistroActualizar">Fecha Registro:</label>
+        <input type="date" id="fechaRegistroActualizar">
+      `;
+  
+    } else if (coleccion === 'Articulos_Menu') {
+      formUpdate.innerHTML = `
+        <label for="idArticuloActualizar">ID Artículo:</label>
+        <input type="text" id="idArticuloActualizar" required>
+        <label for="nombreArticuloActualizar">Nombre Artículo:</label>
+        <input type="text" id="nombreArticuloActualizar">
+        <label for="precioActualizar">Precio:</label>
+        <input type="number" id="precioActualizar">
+        <label for="descripcionArticuloActualizar">Descripción:</label>
+        <input type="text" id="descripcionArticuloActualizar">
+        <label for="categoriaArticuloActualizar">Categoría:</label>
+        <input type="text" id="categoriaArticuloActualizar">
+        <label for="restauranteIdActualizar">ID Restaurante:</label>
+        <input type="text" id="restauranteIdActualizar">
+        <label for="disponibilidadActualizar">Disponibilidad:</label>
+        <input type="checkbox" id="disponibilidadActualizar" name="disponibilidadActualizar" value="true">
+      `;
+  
+    } else if (coleccion === 'Ordenes') {
+      formUpdate.innerHTML = `
+        <label for="idOrdenActualizar">ID Orden:</label>
+        <input type="text" id="idOrdenActualizar" required>
+        <label for="usuarioIdOrdenActualizar">ID Usuario:</label>
+        <input type="text" id="usuarioIdOrdenActualizar">
+        <label for="restauranteIdOrdenActualizar">ID Restaurante:</label>
+        <input type="text" id="restauranteIdOrdenActualizar">
+        <label for="itemsOrdenActualizar">Items (JSON):</label>
+        <input type="text" id="itemsOrdenActualizar">
+        <label for="totalOrdenActualizar">Total:</label>
+        <input type="number" id="totalOrdenActualizar">
+      `;
+  
+    } else if (coleccion === 'Resenas') {
+      formUpdate.innerHTML = `
+        <label for="idResenaActualizar">ID Reseña:</label>
+        <input type="text" id="idResenaActualizar" required>
+        <label for="usuarioIdResenaActualizar">ID Usuario:</label>
+        <input type="text" id="usuarioIdResenaActualizar">
+        <label for="restauranteIdResenaActualizar">ID Restaurante:</label>
+        <input type="text" id="restauranteIdResenaActualizar">
+        <label for="contenidoResenaActualizar">Contenido:</label>
+        <input type="text" id="contenidoResenaActualizar">
+        <label for="calificacionResenaActualizar">Calificación (1-5):</label>
+        <input type="number" id="calificacionResenaActualizar">
+      `;
+    }
+  }
+
 // Función para eliminar elementos (formulario de "Eliminar")
 async function updateDeleteForm() {
     const coleccion = document.getElementById('coleccionEliminar').value;
@@ -202,53 +265,91 @@ document.getElementById('consultarElementoForm').addEventListener('submit', asyn
     const resultadosDiv = document.getElementById('resultados');
     resultadosDiv.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
 });
+// Actualizar elementos
+document.getElementById('coleccionActualizar').addEventListener('change', updateUpdateForm);
+updateUpdateForm();  // Inicializar formulario
 
+// Manejar envío de actualización
 document.getElementById('actualizarElementoForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    const coleccion = document.getElementById('coleccionActualizar').value;
-    const idActualizar = document.getElementById('idRestauranteActualizar').value;
-    const data = {};
+  const coleccion = document.getElementById('coleccionActualizar').value;
+  let idActualizar;
+  const data = {};
 
-    console.log("ID a actualizar:", idActualizar);
+  // Obtener el ID según la colección
+  if (coleccion === 'Usuarios') {
+    idActualizar = document.getElementById('idActualizar').value;
+    data.nombre = document.getElementById('nombreActualizar').value;
+    data.correo = document.getElementById('correoActualizar').value;
+    data.direccion = document.getElementById('direccionActualizar').value;
+    data.telefono = document.getElementById('telefonoActualizar').value;
+    data.fechaRegistro = document.getElementById('fechaRegistroActualizar').value;
+    data.fechaNacimiento = document.getElementById('fechaNacimientoActualizar').value;
 
-    // Recoger los datos del formulario según la colección seleccionada
-    if (coleccion === 'Usuarios') {
-        data.nombre = document.getElementById('nombreActualizar').value;
-        data.correo = document.getElementById('correoActualizar').value;
-        data.direccion = document.getElementById('direccionActualizar').value;
-        data.telefono = document.getElementById('telefonoActualizar').value;
-        data.fechaRegistro = document.getElementById('fechaRegistroActualizar').value;
-        data.fechaNacimiento = document.getElementById('fechaNacimientoActualizar').value;
-    } else if (coleccion === 'Restaurantes') {
-        data.nombre = document.getElementById('nombreRestauranteActualizar').value;
-        data.descripcion = document.getElementById('descripcionRestauranteActualizar').value;
-        data.categoria = document.getElementById('categoriaRestauranteActualizar').value;
-        data.calle = document.getElementById('calleActualizar').value;
-        data.ciudad = document.getElementById('ciudadActualizar').value;
-        data.telefono = document.getElementById('telefonoActualizar').value;
-        data.longitud = parseFloat(document.getElementById('longitudActualizar').value);
-        data.latitud = parseFloat(document.getElementById('latitudActualizar').value);
-        data.fechaRegistro = document.getElementById('fechaRegistroActualizar').value;
+  } else if (coleccion === 'Restaurantes') {
+    idActualizar = document.getElementById('idRestauranteActualizar').value;
+    data.nombre = document.getElementById('nombreRestauranteActualizar').value;
+    data.descripcion = document.getElementById('descripcionRestauranteActualizar').value;
+    data.categoria = document.getElementById('categoriaRestauranteActualizar').value;
+    data.calle = document.getElementById('calleActualizar').value;
+    data.ciudad = document.getElementById('ciudadActualizar').value;
+    data.telefono = document.getElementById('telefonoActualizar').value;
+    data.longitud = parseFloat(document.getElementById('longitudActualizar').value);
+    data.latitud = parseFloat(document.getElementById('latitudActualizar').value);
+    data.fechaRegistro = document.getElementById('fechaRegistroActualizar').value;
 
-        console.log("Datos a actualizar:", data);
+  } else if (coleccion === 'Articulos_Menu') {
+    idActualizar = document.getElementById('idArticuloActualizar').value;
+    data.nombre = document.getElementById('nombreArticuloActualizar').value;
+    data.precio = document.getElementById('precioActualizar').value;
+    data.descripcion = document.getElementById('descripcionArticuloActualizar').value;
+    data.categoria = document.getElementById('categoriaArticuloActualizar').value;
+    data.restauranteId = document.getElementById('restauranteIdActualizar').value;
+    data.disponibilidad = document.getElementById('disponibilidadActualizar').checked;
+
+  } else if (coleccion === 'Ordenes') {
+    idActualizar = document.getElementById('idOrdenActualizar').value;
+    data.usuarioId = document.getElementById('usuarioIdOrdenActualizar').value;
+    data.restauranteId = document.getElementById('restauranteIdOrdenActualizar').value;
+    try {
+      data.items = JSON.parse(document.getElementById('itemsOrdenActualizar').value);
+    } catch (err) {
+      return alert("Items debe ser un arreglo JSON válido, por ejemplo: [\"id1\", \"id2\"]");
     }
+    data.total = document.getElementById('totalOrdenActualizar').value;
 
-    // Realizar la solicitud de actualización
+  } else if (coleccion === 'Resenas') {
+    idActualizar = document.getElementById('idResenaActualizar').value;
+    data.usuarioIdResena = document.getElementById('usuarioIdResenaActualizar').value;
+    data.restauranteIdResena = document.getElementById('restauranteIdResenaActualizar').value;
+    data.contenido = document.getElementById('contenidoResenaActualizar').value;
+    data.calificacion = document.getElementById('calificacionResenaActualizar').value;
+  }
+
+  // Verificar que exista un ID
+  if (!idActualizar) {
+    return alert('Debes indicar un ID válido para actualizar.');
+  }
+
+  // Realizar petición PUT
+  try {
     const response = await fetch(`${apiUrl}/${coleccion.toLowerCase()}/${idActualizar}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
     });
-
     const result = await response.json();
-    if(response.ok) {
-        alert(`Elemento actualizado con éxito: ${result.message}`);
-    } else {
-        alert(`Error: ${result.message}`);
-    }
+    alert(result.message);
     console.log(result);
+  } catch (error) {
+    console.error(error);
+    alert('Ocurrió un error al actualizar. Revisa la consola para más detalles.');
+  }
 });
+
+
+
 
 // Eliminar elementos
 document.getElementById('eliminarElementoForm').addEventListener('submit', async (e) => {

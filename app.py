@@ -62,7 +62,7 @@ def get_ordenes():
 
 @app.route('/api/usuarios/<id>', methods=['PUT'])
 def put_usuario(id):
-    return actualizar_usuario(id, request, db)
+    return actualizar_usuario(request, db)
 
 @app.route('/api/restaurantes/<id>', methods=['PUT'])
 def put_restaurante(id):
@@ -70,15 +70,15 @@ def put_restaurante(id):
 
 @app.route('/api/articulos_menu/<id>', methods=['PUT'])
 def put_articulo_de_menu(id):
-    return actualizar_articulo_de_menu(id, request, db)
+    return actualizar_articulo_de_menu(request, db)
 
 @app.route('/api/ordenes/<id>', methods=['PUT'])
 def put_orden(id):
-    return actualizar_orden(id, request, db)
+    return actualizar_orden(request, db)
 
 @app.route('/api/resenas/<id>', methods=['PUT'])
 def put_resena(id):
-    return actualizar_resena(id, request, db)
+    return actualizar_resena(request, db)
 
 @app.route('/api/usuarios/<id>', methods=['DELETE'])
 def delete_usuario(id):

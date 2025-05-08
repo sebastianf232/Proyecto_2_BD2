@@ -10,151 +10,130 @@ def connect_to_mongo():
     return db
 
 def convertir_a_objectid(id_str):
-    # Si el ID es un ObjectId, lo devolvemos tal cual
+    if isinstance(id_str, ObjectId):
+        return id_str
     if ObjectId.is_valid(id_str):
         return ObjectId(id_str)
-    # Si no es un ObjectId válido, lo dejamos como string
     return id_str
 
-# Función para actualizar un usuario
-def actualizar_usuario(id, request, db):
+
+def _filtrar_campos(data):
+    return {
+        key: value
+        for key, value in data.items()
+        if value is not None and not (isinstance(value, str) and value.strip() == "")
+    }
+
+
+def actualizar_usuario(request, db):
     try:
-        data = request.get_json()  # Obtener los datos a actualizar
-
-        # Verificar si el ID es un ObjectId o un tipo diferente (como string o int)
-        if ObjectId.is_valid(id):
-            # El id es un ObjectId, entonces lo convertimos a un ObjectId de MongoDB
-            id = ObjectId(id)
-
-        # Actualizar el documento en la colección 'usuarios'
-        result = db.Usuarios.update_one(
-            {"_id": id},  # Usamos el id directamente, que puede ser un ObjectId o un string
-            {"$set": data}  # Actualizar los campos con los nuevos valores
-        )
-
-        if result.modified_count == 0:
-            return jsonify({"message": "No se encontró el usuario o no se realizaron cambios"}), 404
-
-        return jsonify({"message": "Usuario actualizado con éxito"}), 200
-
+        usuario_id = convertir_a_objectid(request.view_args['id'])
+        data = request.get_json() or {}
+        update_data = _filtrar_campos(data)
+        if update_data:
+            result = db.Usuarios.update_one({"_id": usuario_id}, {"$set": update_data})
+            if result.matched_count == 0:
+                return jsonify({"message": "Usuario no encontrado"}), 404
+            if result.modified_count == 0:
+                return jsonify({"message": "No se encontraron cambios para actualizar"}), 200
+            return jsonify({"message": "Usuario actualizado con éxito"}), 200
+        return jsonify({"message": "Sin campos para actualizar"}), 400
     except Exception as e:
         return jsonify({"message": f"Error al actualizar el usuario: {str(e)}"}), 500
 
-# Función para actualizar un restaurante
-# Función para actualizar un restaurante
+
 def actualizar_restaurante(request, db):
     try:
-        restaurante_id = request.view_args['id']  # Obtenemos el ID de la URL
-        data = request.get_json()  # Obtenemos los datos a actualizar
-
-        # Convertir el ID recibido a un ObjectId si es posible
-        restaurante_id = convertir_a_objectid(restaurante_id)
-
-        # Crear un diccionario de actualización
-        update_data = {}
-
-        # Solo agregar los campos que se pasen en el request
-        if 'nombre' in data:
-            update_data['nombre'] = data['nombre']
-        if 'descripcion' in data:
-            update_data['descripcion'] = data['descripcion']
-        if 'categoria' in data:
-            update_data['categoria'] = data['categoria']
-        if 'direccion' in data:
-            update_data['direccion'] = data['direccion']
-        if 'telefono' in data:
-            update_data['telefono'] = data['telefono']
-        if 'fechaRegistro' in data:
-            update_data['fechaRegistro'] = data['fechaRegistro']
-        if 'ubicacion' in data:
-            update_data['ubicacion'] = data['ubicacion']
-
-        # Verificar si no hay datos para actualizar
-        if not update_data:
-            return jsonify({"message": "No se proporcionaron datos para actualizar"}), 400
-
-        # Realizar la actualización
-        result = db.Restaurantes.update_one(
-            {"_id": restaurante_id},  # Usar el ID convertido
-            {"$set": update_data}  # Solo actualizar los campos proporcionados
-        )
-
-        if result.modified_count == 0:
-            return jsonify({"message": "No se encontró el restaurante o no se realizaron cambios"}), 404
-
-        return jsonify({"message": "Restaurante actualizado con éxito"}), 200
-
+        restaurante_id = convertir_a_objectid(request.view_args['id'])
+        data = request.get_json() or {}
+        update_data = _filtrar_campos(data)
+        set_data = {}
+        # Campos anidados de dirección
+        if "calle" in update_data:
+            set_data["direccion.calle"] = update_data.pop("calle")
+        if "ciudad" in update_data:
+            set_data["direccion.ciudad"] = update_data.pop("ciudad")
+        # Coordenadas geoespaciales
+        longitud = update_data.pop("longitud", None)
+        latitud = update_data.pop("latitud", None)
+        if longitud is not None and latitud is not None:
+            set_data["ubicacion.coordinates"] = [longitud, latitud]
+        # Restantes campos
+        for key, value in update_data.items():
+            set_data[key] = value
+        if set_data:
+            result = db.Restaurantes.update_one({"_id": restaurante_id}, {"$set": set_data})
+            if result.matched_count == 0:
+                return jsonify({"message": "Restaurante no encontrado"}), 404
+            if result.modified_count == 0:
+                return jsonify({"message": "No se encontraron cambios para actualizar"}), 200
+            return jsonify({"message": "Restaurante actualizado con éxito"}), 200
+        return jsonify({"message": "Sin campos para actualizar"}), 400
     except Exception as e:
         return jsonify({"message": f"Error al actualizar el restaurante: {str(e)}"}), 500
 
-# Función para actualizar un artículo de menú
-def actualizar_articulo_de_menu(id, request, db):
+
+def actualizar_resena(request, db):
     try:
-        data = request.get_json()  # Obtener los datos a actualizar
+        resena_id = convertir_a_objectid(request.view_args['id'])
+        data = request.get_json() or {}
+        update_data = _filtrar_campos(data)
+        # Mapear campos de reseña
+        if "usuarioIdResena" in update_data:
+            update_data["usuarioId"] = convertir_a_objectid(update_data.pop("usuarioIdResena"))
+        if "restauranteIdResena" in update_data:
+            update_data["restauranteId"] = convertir_a_objectid(update_data.pop("restauranteIdResena"))
+        if update_data:
+            result = db.Resenas.update_one({"_id": resena_id}, {"$set": update_data})
+            if result.matched_count == 0:
+                return jsonify({"message": "Reseña no encontrada"}), 404
+            if result.modified_count == 0:
+                return jsonify({"message": "No se encontraron cambios para actualizar"}), 200
+            return jsonify({"message": "Reseña actualizada con éxito"}), 200
+        return jsonify({"message": "Sin campos para actualizar"}), 400
+    except Exception as e:
+        return jsonify({"message": f"Error al actualizar la reseña: {str(e)}"}), 500
 
-        # Verificar si el ID es un ObjectId o un tipo diferente (como string o int)
-        if ObjectId.is_valid(id):
-            # El id es un ObjectId, entonces lo convertimos a un ObjectId de MongoDB
-            id = ObjectId(id)
 
-        # Actualizar el documento en la colección 'articulos_menu'
-        result = db.Articulos_Menu.update_one(
-            {"_id": id},  # Usamos el id directamente, que puede ser un ObjectId o un string
-            {"$set": data}  # Actualizar los campos con los nuevos valores
-        )
-
-        if result.modified_count == 0:
-            return jsonify({"message": "No se encontró el artículo de menú o no se realizaron cambios"}), 404
-
-        return jsonify({"message": "Artículo de menú actualizado con éxito"}), 200
-
+def actualizar_articulo_de_menu(request, db):
+    try:
+        articulo_id = convertir_a_objectid(request.view_args['id'])
+        data = request.get_json() or {}
+        update_data = _filtrar_campos(data)
+        if update_data:
+            result = db.Articulos_Menu.update_one({"_id": articulo_id}, {"$set": update_data})
+            if result.matched_count == 0:
+                return jsonify({"message": "Artículo no encontrado"}), 404
+            if result.modified_count == 0:
+                return jsonify({"message": "No se encontraron cambios para actualizar"}), 200
+            return jsonify({"message": "Artículo de menú actualizado con éxito"}), 200
+        return jsonify({"message": "Sin campos para actualizar"}), 400
     except Exception as e:
         return jsonify({"message": f"Error al actualizar el artículo de menú: {str(e)}"}), 500
 
-# Función para actualizar una orden
-def actualizar_orden(id, request, db):
+
+def actualizar_orden(request, db):
     try:
-        data = request.get_json()  # Obtener los datos a actualizar
-
-        # Verificar si el ID es un ObjectId o un tipo diferente (como string o int)
-        if ObjectId.is_valid(id):
-            # El id es un ObjectId, entonces lo convertimos a un ObjectId de MongoDB
-            id = ObjectId(id)
-
-        # Actualizar el documento en la colección 'ordenes'
-        result = db.Ordenes.update_one(
-            {"_id": id},  # Usamos el id directamente, que puede ser un ObjectId o un string
-            {"$set": data}  # Actualizar los campos con los nuevos valores
-        )
-
-        if result.modified_count == 0:
-            return jsonify({"message": "No se encontró la orden o no se realizaron cambios"}), 404
-
-        return jsonify({"message": "Orden actualizada con éxito"}), 200
-
+        orden_id = convertir_a_objectid(request.view_args['id'])
+        data = request.get_json() or {}
+        update_data = _filtrar_campos(data)
+        # Convertir IDs relacionados
+        if "usuarioId" in update_data:
+            update_data["usuarioId"] = convertir_a_objectid(update_data["usuarioId"])
+        if "restauranteId" in update_data:
+            update_data["restauranteId"] = convertir_a_objectid(update_data["restauranteId"])
+        # Normalizar items
+        if "items" in update_data and isinstance(update_data["items"], list):
+            update_data["items"] = [
+                convertir_a_objectid(item) for item in update_data["items"]
+            ]
+        if update_data:
+            result = db.Ordenes.update_one({"_id": orden_id}, {"$set": update_data})
+            if result.matched_count == 0:
+                return jsonify({"message": "Orden no encontrada"}), 404
+            if result.modified_count == 0:
+                return jsonify({"message": "No se encontraron cambios para actualizar"}), 200
+            return jsonify({"message": "Orden actualizada con éxito"}), 200
+        return jsonify({"message": "Sin campos para actualizar"}), 400
     except Exception as e:
         return jsonify({"message": f"Error al actualizar la orden: {str(e)}"}), 500
-
-# Función para actualizar una reseña
-def actualizar_resena(id, request, db):
-    try:
-        data = request.get_json()  # Obtener los datos a actualizar
-
-        # Verificar si el ID es un ObjectId o un tipo diferente (como string o int)
-        if ObjectId.is_valid(id):
-            # El id es un ObjectId, entonces lo convertimos a un ObjectId de MongoDB
-            id = ObjectId(id)
-
-        # Actualizar el documento en la colección 'resenas'
-        result = db.Resenas.update_one(
-            {"_id": id},  # Usamos el id directamente, que puede ser un ObjectId o un string
-            {"$set": data}  # Actualizar los campos con los nuevos valores
-        )
-
-        if result.modified_count == 0:
-            return jsonify({"message": "No se encontró la reseña o no se realizaron cambios"}), 404
-
-        return jsonify({"message": "Reseña actualizada con éxito"}), 200
-
-    except Exception as e:
-        return jsonify({"message": f"Error al actualizar la reseña: {str(e)}"}), 500
